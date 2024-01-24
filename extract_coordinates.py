@@ -17,7 +17,7 @@ def extract_coordinates_for_frame(traj_file, frame_num, df):
                 
         #coord_list = coordinates.tolist()
         
-        coord_data.append({'index': index, 'coordinates': coord_list})
+        coord_data.append({'index': index, 'coordinates': coordinates})
 
     return pd.DataFrame(coord_data).set_index('index')
 
