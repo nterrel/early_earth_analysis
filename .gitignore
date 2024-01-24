@@ -1,0 +1,7 @@
+__pycache__
+/_broken_extracts/*
+/_trial_extracts/*
+*.pdb
+*.pq
+split_parquets/*
+
