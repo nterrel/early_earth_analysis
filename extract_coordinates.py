@@ -14,11 +14,12 @@ def extract_coordinates_for_frame(traj_file, frame_num, df):
     frame = md.load_frame(traj_file, index=frame_num, top=top_file)
     frame_time_loaded = timeit.default_timer()
     print(f'Time to load frame {frame_num} of trajectory: {frame_time_loaded - frame_time_start}')
-    coord_data = []
+    coord_dict = {}
     nan_count = 0
     for index, row in df[df['local_frame'] == frame_num].iterrows():
         row_timer_start = timeit.default_timer()
-        print('index:', index, 'row:', row)
+        print('index:', index)
+        print('row:\n', row)
         try:
             coordinates = frame.xyz[0, row['atom_indices']]
             coord_dict[index] = coordinates
@@ -56,7 +57,11 @@ def main():
             traj_file = df[df['local_frame'] == frame_num]['dcd_file'].iloc[0]
             coord_dict = extract_coordinates_for_frame(traj_file, frame_num, df)
             for index in coord_dict:
-                df.at[index, 'coordinates'] = coord_dict[index]
+                try:
+                    df.at[index, 'coordinates'] = coord_dict[index]
+                except Exception as e:
+                    print(f"Error inserting coordinates at index {index}: {e}")
+                    print(f"Shape of coordinates being inserted: {coord_dict[index].shape if coord_dict[index] is not np.nan else 'NaN'}")
             break
 
         # NOTE: If saving to h5 instead of pq, multi-dim NP array can be saved directly

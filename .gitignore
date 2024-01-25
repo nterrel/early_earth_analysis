@@ -4,4 +4,6 @@ __pycache__
 *.pdb
 *.pq
 split_parquets/*
+*.log
+*.txt
 
