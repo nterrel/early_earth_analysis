@@ -7,4 +7,4 @@
 
 module load conda
 conda activate /blue/roitberg/apps/torch1121
-python /red/roitberg/nick_analysis/extract_coordinates.py > /blue/roitberg/nterrel/extract_coords_out.txt
+python /red/roitberg/nick_analysis/extract_coordinates.py &> /blue/roitberg/nterrel/extract_coords_out.txt

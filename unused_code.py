@@ -92,3 +92,21 @@ for index, row in alanine_df.iterrows():
 
     if count > 100:
         break
+
+
+
+# OLD main() (Jan 25th at 13:57):
+def main():
+    for floor_time, df in separate_dfs.items():
+        unique_frames = df['local_frame'].unique()
+        for frame_num in unique_frames:
+            traj_file = df[df['local_frame'] == frame_num]['dcd_file'].iloc[0]
+            coord_df = extract_coordinates_for_frame(traj_file, frame_num, df)
+            df = df.merge(coord_df, left_index=True, right_index=True, how='left')
+            break
+
+        # NOTE: If saving to h5 instead of pq, multi-dim NP array can be saved directly
+        #   Trying that last today (1/24/24) since I keep hitting errors 
+
+        df.to_hdf(f"/red/roitberg/nick_analysis/split_parquets/coord_df_{floor_time}.h5", key='df', mode='w')
+        break
