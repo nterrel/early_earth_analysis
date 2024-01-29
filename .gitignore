@@ -6,4 +6,5 @@ __pycache__
 split_parquets/*
 *.log
 *.txt
+*.dcd
 
