@@ -7,4 +7,5 @@ split_parquets/*
 *.log
 *.txt
 *.dcd
+*.h5
 

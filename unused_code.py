@@ -1,3 +1,6 @@
+# NOTE: This file is just a place to store code I'm scared to delete, but which does not work the way I want it to
+    # Just inspiration for future use
+
 alanine_df = pd.read_parquet('/red/roitberg/nick_analysis/alanine_df.pq')
 # The above df can be obtained with:
     # df = pd.read_parquet('/red/roitberg/prod_analysis/merged_mol.pq')
