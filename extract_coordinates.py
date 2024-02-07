@@ -6,12 +6,20 @@ import cProfile
 import re
 import timeit
 import numpy as np
+from top_loader import get_topology
 
 start_time = timeit.default_timer()
 
+parquet_dir = '/red/roitberg/nick_analysis/split_parquets'
+top_file = '/red/roitberg/nick_analysis/traj_top_0.0ns.h5'
+topology = get_topology(top_file)
+
+topology_timer = timeit.default_timer()
+print(f"Topology loaded in {topology_timer - start_time} seconds")
+
 def extract_coordinates_for_frame(traj_file, frame_num, df):
     frame_time_start = timeit.default_timer()
-    frame = md.load_frame(traj_file, index=frame_num, top=top_file)
+    frame = md.load_frame(traj_file, index=frame_num, top=topology)
     frame_time_loaded = timeit.default_timer()
     print(f'Time to load frame {frame_num} of trajectory: {frame_time_loaded - frame_time_start}')
     coord_dict = {}
@@ -36,8 +44,6 @@ def extract_coordinates_for_frame(traj_file, frame_num, df):
         print(f"Time taken for looping over one row: {row_timer_finish - row_timer_start} seconds")
     return coord_dict
 
-parquet_dir = '/red/roitberg/nick_analysis/split_parquets'
-top_file = '/blue/roitberg/apps/lammps-ani/examples/early_earth/data/mixture_22800000.pdb'
 
 separate_dfs = {}
 
@@ -56,6 +62,7 @@ def main():
         for frame_num in unique_frames:
             traj_file = df[df['local_frame'] == frame_num]['dcd_file'].iloc[0]
             coord_dict = extract_coordinates_for_frame(traj_file, frame_num, df)
+            print(coord_dict)
             for index in coord_dict:
                 try:
                     df.at[index, 'coordinates'] = coord_dict[index]
