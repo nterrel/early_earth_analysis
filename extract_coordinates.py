@@ -8,16 +8,35 @@ import timeit
 import numpy as np
 from top_loader import load_topology
 
+"""
+This script extracts molecular coordinates from trajectory files for molecules identified in simulations
+and stores these coordinates in a pandas DataFrame. The DataFrame is then saved in an HDF5 format.
+Each molecule's original and updated indices, along with their coordinates, are maintained for reference.
+"""
+
 start_time = timeit.default_timer()
 
 parquet_dir = '/red/roitberg/nick_analysis/split_parquets'
 top_file = '/red/roitberg/nick_analysis/traj_top_0.0ns.h5'
+print("Loading topology from:", top_file)
 topology = load_topology(top_file)
 
 topology_timer = timeit.default_timer()
 print(f"Topology loaded in {topology_timer - start_time} seconds")
 
 def extract_coordinates_for_frame(traj_file, topology, frame_num, df):
+    """
+    Extracts coordinates for all molecules in a given frame from a trajectory file.
+    
+    Parameters:
+    - traj_file: Path to the trajectory file.
+    - topology: The topology object associated with the trajectory.
+    - frame_num: The frame number to extract coordinates for.
+    - df: The pandas DataFrame containing molecule information.
+    
+    Returns:
+    - coord_dict: A dictionary mapping molecule indices to their coordinates.
+    """
     frame_time_start = timeit.default_timer()
     frame = md.load_frame(traj_file, index=frame_num, top=topology)
     frame_time_loaded = timeit.default_timer()
@@ -68,7 +87,6 @@ def main():
                     print(f"Error inserting coordinates at index {index}: {e}")
                     print(f"Shape of coordinates being inserted: {coord_dict[index].shape if coord_dict[index] is not np.nan else 'NaN'}")
         df.to_hdf(f"/red/roitberg/nick_analysis/split_parquets/coord_df_{floor_time}.h5", key='df', mode='w')
-        break
     global_end = timeit.default_timer()
     print(f"Total time for the script: {global_end - global_start}")
 
