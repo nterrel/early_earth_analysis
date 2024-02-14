@@ -1,3 +1,0 @@
-trial_submit.sh notes:
-* --mem=64gb ran but seemed to be very slow to produce a single output
-* next iteration (for n=100 molecules) was changed to 4 hrs at 128 gb of ram

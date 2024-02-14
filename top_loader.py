@@ -10,7 +10,7 @@ import mdtraj.core.element as elem
 from mdtraj.utils.six import string_types
 
 
-def get_topology(fname: str):
+def load_topology(file_name: str):
     """Get the topology out from the file. This function is a slightly reworked version of the topology method from md.load
 
     Returns
@@ -18,13 +18,13 @@ def get_topology(fname: str):
     topology : mdtraj.Topology
         A topology object
     """
-    def get_node(fname: str, root: str, name: str) -> tp.Any:
+    def get_node(file_name: str, root: str, name: str) -> tp.Any:
         filters = tables.Filters(complib="zlib", shuffle=True, complevel=1)
-        f = tables.open_file(fname, mode="r", filters=filters)
+        f = tables.open_file(file_name, mode="r", filters=filters)
         return f.get_node(root, name=name)
 
     try:
-        raw = get_node(fname, root="/", name="topology")[0]
+        raw = get_node(file_name, root="/", name="topology")[0]
         if not isinstance(raw, string_types):
             raw = raw.decode()
         topology_dict = json.loads(raw)
@@ -69,4 +69,4 @@ def get_topology(fname: str):
 
 
 # Usage: 
-# file = get_topology("/red/roitberg/nick_analysis/traj0.3ns.h5")
+# file = get_topology("/red/roitberg/nick_analysis/traj0.0ns.h5")

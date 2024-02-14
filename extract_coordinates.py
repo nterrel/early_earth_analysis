@@ -6,29 +6,31 @@ import cProfile
 import re
 import timeit
 import numpy as np
-from top_loader import get_topology
+from top_loader import load_topology
 
 start_time = timeit.default_timer()
 
 parquet_dir = '/red/roitberg/nick_analysis/split_parquets'
 top_file = '/red/roitberg/nick_analysis/traj_top_0.0ns.h5'
-topology = get_topology(top_file)
+topology = load_topology(top_file)
 
 topology_timer = timeit.default_timer()
 print(f"Topology loaded in {topology_timer - start_time} seconds")
 
-def extract_coordinates_for_frame(traj_file, frame_num, df):
+def extract_coordinates_for_frame(traj_file, topology, frame_num, df):
     frame_time_start = timeit.default_timer()
     frame = md.load_frame(traj_file, index=frame_num, top=topology)
     frame_time_loaded = timeit.default_timer()
     print(f'Time to load frame {frame_num} of trajectory: {frame_time_loaded - frame_time_start}')
     coord_dict = {}
     nan_count = 0
-    for index, row in df[df['local_frame'] == frame_num].iterrows():
+    filtered_df = df[df['local_frame'] == frame_num]
+    for index, row in filtered_df.iterrows():
         row_timer_start = timeit.default_timer()
         print('index:', index)
         print('row:\n', row)
         try:
+            print('Row, atom indices', row['atom_indices'])
             coordinates = frame.xyz[0, row['atom_indices']]
             coord_dict[index] = coordinates
         except Exception as e:
@@ -53,6 +55,7 @@ for filename in os.listdir(parquet_dir):
         if match:
             floor_time = float(match.group(1))
             df = pd.read_parquet(os.path.join(parquet_dir, filename))
+            df = df.reset_index(inplace=True, drop=False)
             separate_dfs[floor_time] = df
 
 def main():
@@ -63,16 +66,14 @@ def main():
             traj_file = df[df['local_frame'] == frame_num]['dcd_file'].iloc[0]
             coord_dict = extract_coordinates_for_frame(traj_file, frame_num, df)
             print(coord_dict)
-            for index in coord_dict:
+            for index, coords in coord_dict.items():
                 try:
+                    breakpoint()
                     df.at[index, 'coordinates'] = coord_dict[index]
                 except Exception as e:
                     print(f"Error inserting coordinates at index {index}: {e}")
                     print(f"Shape of coordinates being inserted: {coord_dict[index].shape if coord_dict[index] is not np.nan else 'NaN'}")
             break
-
-        # NOTE: If saving to h5 instead of pq, multi-dim NP array can be saved directly
-        #   Trying that last today (1/24/24) since I keep hitting errors 
 
         df.to_hdf(f"/red/roitberg/nick_analysis/split_parquets/coord_df_{floor_time}.h5", key='df', mode='w')
         break
