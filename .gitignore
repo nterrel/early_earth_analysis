@@ -8,4 +8,6 @@ split_parquets/*
 *.txt
 *.dcd
 *.h5
+Sync_to_mac
+
 
