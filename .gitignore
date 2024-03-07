@@ -9,5 +9,8 @@ split_parquets/*
 *.dcd
 *.h5
 Sync_to_mac
+Old_outputs/
+Ala_df/
+*.xyz
 
 
