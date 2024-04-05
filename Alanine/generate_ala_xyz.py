@@ -6,7 +6,7 @@ from top_loader import load_topology
 # Start the timer to measure total runtime
 start_timer = time.time()
 
-# Load the molecular topology once, as it's used for all files
+# Load the molecular topology only once, as it's used for all files
 top = load_topology('/red/roitberg/nick_analysis/traj_top_0.0ns.h5')
 
 # Measure the time taken to load topology

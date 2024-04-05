@@ -1,10 +1,10 @@
 import glob
 
 # Path to the directory containing the .xyz files
-xyz_dir = '/red/roitberg/nick_analysis/Ala_df/XYZs'
+xyz_dir = '/red/roitberg/nick_analysis/Ala_df/XYZs/Ordered'
 
 # New file to contain all concatenated .xyz files
-all_xyz_filename = '/red/roitberg/nick_analysis/Ala_df/XYZs/all_alanines.xyz'
+all_xyz_filename = '/red/roitberg/nick_analysis/Ala_df/XYZs/all_ordered_alanines.xyz'
 
 # Open the new file in write mode
 with open(all_xyz_filename, 'w') as all_xyz_file:

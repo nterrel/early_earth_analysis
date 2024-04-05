@@ -6,3 +6,6 @@ Usage and some notes:
 
 * _broken_scripts, _broken_extracts primarily contain things that did not work, but may also include things that are no longer necessary due to updated methods
 
+
+
+** THIS NEEDS UPDATING FOR WHAT I'VE WORKED ON RECENTLY

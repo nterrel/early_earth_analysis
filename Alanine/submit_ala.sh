@@ -7,4 +7,4 @@
 
 module load conda
 conda activate /blue/roitberg/apps/torch1121
-python /red/roitberg/nick_analysis/extract_ala_updated.py &> /red/roitberg/nick_analysis/extract_ala_updated_out_continued.txt
+python /red/roitberg/nick_analysis/extract_ala.py &> /red/roitberg/nick_analysis/extract_ala_updated_out_continued.txt
