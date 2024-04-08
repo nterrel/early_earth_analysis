@@ -16,6 +16,7 @@ The 22.8M Early Earth simulation showed the formation of many molecules, includi
 ## Other sub-directories:
 
 - `HDF_coord/`
+  - Not saved to remote repo
   - This is where the .h5 files containing extracted xyz coordinates for alanine molecules are located.
 
 - `XYZs/`

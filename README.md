@@ -29,26 +29,31 @@ The topology of the 22.8M atom simulation is saved from frame 0 of the 0.0ns .dc
 
 ## Some directories and their contents: 
 
-- `_broken`:
-  - Explains itself; where I put scripts and outputs that didn't work as expected, but probably want to hang onto
-
-- `_testing`:
-  - Location of scripts that aren't yet ready to run (or things I don't want to delete, timing tests, etc.)
 
 - `Alanine`:
   - Contains scripts, outputs, analysis related to extracted alanine molecules
 
 - `Coordinate_hdf`:
+  - Not saved to remote repo
   - (WIP) Here is where I want to include HDFs with coordinates for ALL 'found' molecules in the EE simulation. Needs work, there's only a few h5 files here, the others have not been generated yet
 
 - `Old_outputs`:
+  - Not saved to remote repo
   - .txt and .log files from scripts, only keeping for timing/job execution details 
 
 - `Scripts`:
   - (WIP) Location for general scripts (after adapting from Ala stuff)
 
 - `Split_parquets`:
+  - Not saved to remote repo
   - These files are split along the same timestamps as the .dcd trajectory files. Includes the absolute path to a trajectory file in which a molecule can be found/extracted
 
 - `Sync_to_mac`:
+  - Not saved to remote repo
   - Used to send files (via sshfs) between my MacBook and this directory on HPG
+
+- `_broken`:
+  - Explains itself; where I put scripts and outputs that didn't work as expected, but probably want to hang onto
+
+- `_testing`:
+  - Location of scripts that aren't yet ready to run (or things I don't want to delete, timing tests, etc.)
