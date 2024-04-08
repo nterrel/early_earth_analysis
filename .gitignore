@@ -1,16 +1,19 @@
 __pycache__
-/_broken_extracts/*
-/_trial_extracts/*
-*.pdb
-*.pq
-split_parquets/*
-*.log
-*.txt
+_broken
+_testing
+
+Alanine/Ala_df
+Coordinate_hdf
+Split_parquets
+Sync_to_mac
+Old_outputs
+
 *.dcd
 *.h5
-Sync_to_mac
-Old_outputs/
-Ala_df/
+*.pdb
+*.pq
+*.log
+*.txt
 *.xyz
 
 
