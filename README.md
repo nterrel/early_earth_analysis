@@ -1,3 +1,8 @@
+# Early Earth simulation analysis
+
+Source (local) repository housed on HiPerGator at `/red/roitberg/nick_analysis/`
+
+
 ## Usage and some notes:
 
 The topology of the 22.8M atom simulation is saved from frame 0 of the 0.0ns .dcd trajectory file

@@ -1,6 +1,6 @@
 # Alanine Extraction and Characterization
 
-The 22.8M Early Earth simulation showed the formation of many molecules, including 450K alanine molecules. This directory includes scripts pertaining to the extraction and characterization of these molecules.
+The 22.8M ANI-rx Early Earth simulation showed the formation of many molecules, including 450K alanine molecules. This directory includes scripts pertaining to the extraction and characterization of these molecules.
 
 ## Scripts:
 
