@@ -58,7 +58,9 @@ The topology of the 22.8M atom simulation is saved from frame 0 of the 0.0ns .dc
   - Used to send files (via sshfs) between my MacBook and this directory on HPG
 
 - `_broken`:
+  - Not saved to remote repo
   - Explains itself; where I put scripts and outputs that didn't work as expected, but probably want to hang onto
 
 - `_testing`:
+  - Not saved to remote repo
   - Location of scripts that aren't yet ready to run (or things I don't want to delete, timing tests, etc.)
