@@ -1,3 +1,4 @@
+# Directories to ignore:
 __pycache__
 _broken
 _testing
@@ -8,6 +9,7 @@ Split_parquets
 Sync_to_mac
 Old_outputs
 
+# File extensions to ignore: 
 *.dcd
 *.h5
 *.pdb
