@@ -24,6 +24,6 @@ The 22.8M ANI-rx Early Earth simulation showed the formation of many molecules, 
 
 ## Notes on the Extraction Process:
 
-- Approximately 450,000 alanines were extracted from the simulation. However, about 10,000 of these were not truly alanine molecules; they just met the graph search criteria.
+- Approximately 449,831 alanines were extracted from the simulation. However, about 10,000 of these were not truly alanine molecules; they just met the graph search criteria.
 
 - A more stringent graph search narrowed this down to 438,987 alanine molecules. This refinement was necessary to reorder atomic coordinates to the same ordering for visualization purposes. During this process, it was determined that the graph search criteria were not specific enough to determine the correct connectivity.
