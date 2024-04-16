@@ -2,7 +2,7 @@
 
 The 22.8M ANI-rx Early Earth simulation showed the formation of many molecules, including 450K alanine molecules. This directory includes scripts pertaining to the extraction and characterization of these molecules.
 
-## Scripts:
+## Scripts
 
 - `extract_ala.py`
   - Extracts alanine molecules from the simulation data.
@@ -13,7 +13,7 @@ The 22.8M ANI-rx Early Earth simulation showed the formation of many molecules, 
 - `generate_ala_xyz.py`
   - Generates .xyz files from extracted coordinates for further analysis.
 
-## Other sub-directories:
+## Other sub-directories
 
 - `HDF_coord/`
   - Not saved to remote repo
@@ -22,7 +22,7 @@ The 22.8M ANI-rx Early Earth simulation showed the formation of many molecules, 
 - `XYZs/`
   - Location of coordinates converted from .h5 stores to .xyz files along 0.1ns splits.
 
-## Notes on the Extraction Process:
+## Notes on the Extraction Process
 
 - Approximately 449,831 alanines were extracted from the simulation. However, about 10,000 of these were not truly alanine molecules; they just met the graph search criteria.
 
