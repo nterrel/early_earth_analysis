@@ -12,7 +12,7 @@ Steps Ignacio took to unwrap and align:
 2. Create a topology in tleap
 3. Using that topology information, and the following cpptraj code:
 
-```
+```cpp
 parm ala.prmtop
 trajin alanines.xyz
 unwrap
