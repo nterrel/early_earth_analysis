@@ -24,3 +24,6 @@ run
 Output the file `alanines.out.xyz`
 
 The coordinates here are all aligned to some center (which cpptraj decided, either center of mass or center of geometry)
+
+NOTE: I had to manually move the comments from the original `all_alanines.xyz` to `alanines.out.xyz`, and renamed it to `alanines_final.xyz`.
+

@@ -103,10 +103,7 @@ def create_networkx_graph(coordinates, atom_types, bond_data_stretched, species_
             i, element=species_dict[atomic_num_i], atomic_num=atomic_num_i, pos=pos_i)
 
     for i, pos_i in enumerate(coordinates):
-        # Ensure no self-comparison and no duplicate pairs
         for j, pos_j in enumerate(coordinates[i + 1:], start=i + 1):
-            # if i == 0 and j == 1:  # Example: Log distance calculation for the first pair as a check
-            #     logging.debug(f"Distance between atoms {i} and {j} under PBC: {dist}")
             dist = pbc_distance(np.array(pos_i), np.array(
                 pos_j), np.array(box_lengths))
             elem_i = species_dict[atomic_nums[i]]
