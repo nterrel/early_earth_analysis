@@ -5,6 +5,15 @@ import numpy as np
 from tqdm.auto import tqdm
 import re
 import os
+from multiprocessing import Pool, cpu_count
+import psutil
+
+
+def log_system_usage():
+    process = psutil.Process(os.getpid())
+    memory_use = process.memory_info().rss / (1024 * 1024)  # memory use in MB
+    cpu_percent = process.cpu_percent(interval=1)  # CPU usage percentage
+    print(f"Memory usage: {memory_use} MB, CPU usage: {cpu_percent}%")
 
 
 def extract_and_assign_coordinates(row, topology):
@@ -28,22 +37,30 @@ def process_group(group, topology):
     return group
 
 
-def main(df, topology):
-    # Assuming your dataframe now includes a 'molecule_type' column.
-    # Group by both dcd file and molecule type
-    grouped = df.groupby(['dcd_file', 'molecule_type'])
-    for (dcd_file, molecule_type), group in tqdm(grouped, desc="Processing"):
-        ns_timestamp = re.search(r'(\d+\.\d+)ns\.dcd$', dcd_file)
-        ns_str = ns_timestamp.group(1) if ns_timestamp else 'unknown'
-        output_file_name = f'/red/roitberg/nick_analysis/{molecule_type}_df/{molecule_type}_coord_{ns_str}ns.h5'
+def process_file(group_data):
+    dcd_file, molecule_type, group, topology = group_data
+    ns_timestamp = re.search(r'(\d+\.\d+)ns\.dcd$', dcd_file)
+    ns_str = ns_timestamp.group(1) if ns_timestamp else 'unknown'
+    output_file_name = f'/red/roitberg/nick_analysis/{molecule_type}_df/{molecule_type}_coord_{ns_str}ns.h5'
 
-        if os.path.exists(output_file_name):
-            print(f"File {output_file_name} already exists. Skipping.")
-            continue
-
+    if not os.path.exists(output_file_name):
         processed_group = process_group(group, topology)
         processed_group.to_hdf(output_file_name, key='df', mode='w')
         print(f"Saved processed group for {dcd_file} to {output_file_name}")
+    log_system_usage()
+
+
+def extract_timestamp(dcd_file):
+    ns_timestamp = re.search(r'(\d+\.\d+)ns\.dcd$', dcd_file)
+    return ns_timestamp.group(1) if ns_timestamp else 'unknown'
+
+
+def main(df, topology):
+    grouped = df.groupby(['dcd_file', 'name'])
+    tasks = [(dcd_file, molecule_type, group, topology) for (dcd_file, molecule_type), group in grouped if not os.path.exists(
+        f'/red/roitberg/nick_analysis/{molecule_type}_df/{molecule_type}_coord_{extract_timestamp(dcd_file)}ns.h5')]
+    with Pool(processes=cpu_count()) as pool:
+        pool.map(process_file, tasks)
 
 
 if __name__ == "__main__":
@@ -51,4 +68,5 @@ if __name__ == "__main__":
     if 'coordinates' not in df.columns:
         df['coordinates'] = np.nan
     topology = load_topology('/red/roitberg/nick_analysis/traj_top_0.0ns.h5')
+    df = df.head(100)
     main(df, topology)
