@@ -1,8 +1,9 @@
+# Keeping track of small outputs here
+
 Assigning stereochemistry with RDKit:
     (ani) nickterrel WIP % python assign_stereochemistry.py
 
 Total runtime for all stereo_analyses (438,773 alanines): 147.1323938369751 seconds.
-
 
     (ani) nickterrel WIP % grep "Unassigned-" stereo_labeled_alanines.sdf -c
 
@@ -18,4 +19,4 @@ Total runtime for all stereo_analyses (438,773 alanines): 147.1323938369751 seco
 
 Total = 219007+212997+68 = 432072
 
-** Something happened to ~6700 alanine molecules that isn't one of the three possible outputs **
+## Something happened to ~6700 alanine molecules that isn't one of the three possible outputs
