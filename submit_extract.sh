@@ -1,8 +1,8 @@
 #!/bin/bash
 #SBATCH --job-name=extract_coords
-#SBATCH --ntasks=12
+#SBATCH --ntasks=6
 #SBATCH --cpus-per-task=1
-#SBATCH --mem=200gb
+#SBATCH --mem-per-cpu=48gb
 #SBATCH --time=48:00:00
 #SBATCH --output=/red/roitberg/nick_analysis/extract_coord_%j.log
 

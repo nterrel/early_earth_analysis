@@ -5,8 +5,7 @@ _testing
 
 Alanine/Ala_df
 Alanine/HDF_coord
-Coordinate_hdf
-HDF_coord # This is a repeat of above, but a different script uses this dir (delete above once extract_general.py works)
+HDF_coord
 Split_parquets
 Sync_to_mac
 Old_outputs

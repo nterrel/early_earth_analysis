@@ -7,6 +7,20 @@ import os
 from multiprocessing import Pool, cpu_count
 import psutil
 import gc
+import json
+
+
+def save_checkpoint(file_path, last_processed_index):
+    with open(file_path, 'w') as f:
+        json.dump({'last_index': last_processed_index}, f)
+
+
+def load_checkpoint(file_path):
+    try:
+        with open(file_path, 'r') as f:
+            return json.load(f)['last_index']
+    except FileNotFoundError:
+        return None  # No checkpoint found
 
 
 def log_system_usage():
@@ -41,25 +55,41 @@ def extract_and_assign_coordinates(row, topology, dcd_file):
         return np.nan
 
 
-def process_group(group, topology, dcd_file):
-    group['coordinates'] = group.apply(
-        lambda row: extract_and_assign_coordinates(row, topology, dcd_file), axis=1)
-    return group
+def generate_coordinates(df, topology, dcd_file, start_index=0):
+    for index, row in df.iloc[start_index:].iterrows():
+        coordinates = extract_and_assign_coordinates(row, topology, dcd_file)
+        yield index, coordinates
 
 
-def process_file(file_path, topology, dcd_map):
+def process_group_with_generator(df, topology, dcd_file, output_file, start_index, checkpoint_path, batch_size=1000):
+    batch = []
+    for index, coordinates in generate_coordinates(df, topology, dcd_file, start_index):
+        batch.append({'index': index, 'coordinates': coordinates})
+        if len(batch) >= batch_size:
+            pd.DataFrame(batch).to_hdf(output_file, key='df', mode='a', format='table', append=True)
+            batch = []  # Reset batch
+            save_checkpoint(checkpoint_path, index)  # Save checkpoint after each batch
+    if batch:
+        pd.DataFrame(batch).to_hdf(output_file, key='df', mode='a', format='table', append=True)  # Save any remaining batch
+    gc.collect()
+
+
+def process_file(file_path, topology, dcd_map, checkpoint_dir):
     try:
-        log_system_usage()  # Log before processing starts
+        dcd_file = dcd_map[re.search(r'_([\d\.]+)\.pq$', file_path).group(1)]
+        checkpoint_path = os.path.join(
+            checkpoint_dir, os.path.basename(file_path) + ".checkpoint")
+        last_index = load_checkpoint(checkpoint_path)
+        start_index = last_index + 1 if last_index is not None else 0
+
         df = pd.read_parquet(file_path)
-        # Limit the DataFrame to the first 100 rows for the test
-        # df = df.head(100)
-        if 'coordinates' not in df.columns:
-            df['coordinates'] = np.nan
-        timestamp = re.search(r'_([\d\.]+)\.pq$', file_path).group(1)
-        dcd_file = dcd_map[timestamp]
-        processed_group = process_group(df, topology, dcd_file)
-        log_system_usage()  # Log after processing
-        return processed_group, timestamp
+        output_file = os.path.join(
+            '/red/roitberg/nick_analysis/HDF_coord/', os.path.basename(file_path).replace('.pq', '.h5'))
+
+        process_group_with_generator(
+            df, topology, dcd_file, output_file, start_index)
+
+        log_system_usage()
     except Exception as e:
         print(f"Failed to process {file_path}: {e}")
         return None, None
@@ -70,29 +100,18 @@ def extract_timestamp(dcd_file):
     return ns_timestamp.group(1) if ns_timestamp else 'unknown'
 
 
-def main(topology, dcd_map):
+def main(topology, dcd_map, checkpoint_dir):
     parquet_dir = '/red/roitberg/nick_analysis/Split_parquets'
+    store_dir = '/red/roitberg/nick_analysis/HDF_coord/'
+    os.makedirs(store_dir, exist_ok=True)
+    os.makedirs(checkpoint_dir, exist_ok=True)
+
     parquet_files = [os.path.join(parquet_dir, f)
                      for f in os.listdir(parquet_dir) if f.endswith('.pq')]
-    # parquet_files = parquet_files[:2]
-    store_dir = '/red/roitberg/nick_analysis/HDF_coord/'
 
-    # Ensure the storage directory exists
-    os.makedirs(store_dir, exist_ok=True)
-
-    # Using multiprocessing to process files
     with Pool(processes=cpu_count() // 2) as pool:
-        results = pool.starmap(
-            process_file, [(f, topology, dcd_map) for f in parquet_files])
-
-    # Saving results into separate HDF5 files
-    for result, ns_str in results:
-        if result is not None:
-            output_file_name = f'{store_dir}coord_{ns_str}ns.h5'
-            result.to_hdf(output_file_name, key='df', mode='w')
-            print(f"Saved processed data for {ns_str}ns to {output_file_name}")
-            del result  # Delete the DataFrame to free memory
-            gc.collect()  # Collect garbage to free up memory
+        pool.starmap(process_file, [
+                     (f, topology, dcd_map, checkpoint_dir) for f in parquet_files])
 
 
 if __name__ == "__main__":
