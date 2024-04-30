@@ -42,7 +42,7 @@ def process_group(group, topology, output_file):
 
 def process_file(file_path, topology, dcd_map, checkpoint_dir, test_limit=None):
     df = pd.read_parquet(file_path).head(test_limit)
-    df = df[['name'] == 'Glycine']
+    df = df[df['name'] == 'Glycine']
     output_dir = checkpoint_dir
     for (dcd_file, time), group in df.groupby(['dcd_file', 'floor_time']):
         output_file = os.path.join(output_dir, f"coord_df_{time}ns.h5")

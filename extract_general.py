@@ -34,36 +34,36 @@ def extract_coordinates_for_frame(group, topology):
     return group
 
 
-def process_group(group, topology, output_file):
-    processed_data = extract_coordinates_for_frame(group, topology)
-    processed_data.to_parquet(output_file, index=False)
-    return output_file
-
-
-def process_file(file_path, topology, dcd_map, checkpoint_dir, test_limit=None):
+def process_file(file_path, topology, dcd_map, output_dir, test_limit=None):
+    print(f"Starting processing file: {file_path}")
     df = pd.read_parquet(file_path).head(test_limit)
     df = df[~df['name'].isin(['Alanine', 'Glycine'])]
-    output_dir = checkpoint_dir
     for (dcd_file, time), group in df.groupby(['dcd_file', 'floor_time']):
         output_file = os.path.join(output_dir, f"coord_df_{time}ns.h5")
+        print(f"Processing group from {dcd_file} at {time}ns")
         processed_group = extract_coordinates_for_frame(group, topology)
         processed_group.to_hdf(output_file, key='data', mode='a')
+        print(f"Coordinates extracted for {time}ns saved to {output_file}")
 
     log_system_usage()
     gc.collect()
+    print(f"Finished processing file: {file_path}")
 
 
-def main(topology_path, dcd_path, parquet_dir, checkpoint_dir):
+def main(topology_path, dcd_path, parquet_dir, output_dir):
     topology = load_topology(topology_path)
     dcd_map = setup_dcd_mapping(dcd_path)
-    parquet_files = [os.path.join(parquet_dir, f) for f in sorted(os.listdir(parquet_dir)) if f.endswith('.pq')][:6]  # Limit to first 2 files
+    parquet_files = [os.path.join(parquet_dir, f) for f in sorted(
+        os.listdir(parquet_dir)) if f.endswith('.pq')]
 
     with Pool(processes=cpu_count()) as pool:
-        pool.starmap(process_file, [(f, topology, dcd_map, checkpoint_dir) for f in parquet_files])
+        pool.starmap(process_file, [
+                     (f, topology, dcd_map, output_dir) for f in parquet_files])
+    print("All files processed.")
 
 
 if __name__ == "__main__":
     main('/red/roitberg/nick_analysis/traj_top_0.0ns.h5',
          '/red/roitberg/22M_20231222_prodrun',
          '/red/roitberg/nick_analysis/Split_parquets',
-         '/red/roitberg/nick_analysis/Checkpoints')
+         '/red/roitberg/nick_analysis/HDF_coord')
