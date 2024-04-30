@@ -42,7 +42,7 @@ def process_group(group, topology, output_file):
 
 def process_file(file_path, topology, dcd_map, checkpoint_dir, test_limit=None):
     df = pd.read_parquet(file_path).head(test_limit)
-    df = df[~df['name'].isin(['Alanine', 'Glycine'])]
+    df = df[['name'] == 'Glycine']
     output_dir = checkpoint_dir
     for (dcd_file, time), group in df.groupby(['dcd_file', 'floor_time']):
         output_file = os.path.join(output_dir, f"coord_df_{time}ns.h5")
@@ -56,10 +56,12 @@ def process_file(file_path, topology, dcd_map, checkpoint_dir, test_limit=None):
 def main(topology_path, dcd_path, parquet_dir, checkpoint_dir):
     topology = load_topology(topology_path)
     dcd_map = setup_dcd_mapping(dcd_path)
-    parquet_files = [os.path.join(parquet_dir, f) for f in sorted(os.listdir(parquet_dir)) if f.endswith('.pq')][:6]  # Limit to first 2 files
+    parquet_files = [os.path.join(parquet_dir, f) for f in sorted(
+        os.listdir(parquet_dir)) if f.endswith('.pq')][:6]  # Limit to first 2 files
 
     with Pool(processes=cpu_count()) as pool:
-        pool.starmap(process_file, [(f, topology, dcd_map, checkpoint_dir) for f in parquet_files])
+        pool.starmap(process_file, [
+                     (f, topology, dcd_map, checkpoint_dir) for f in parquet_files])
 
 
 if __name__ == "__main__":

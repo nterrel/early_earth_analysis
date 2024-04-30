@@ -1,5 +1,12 @@
 # Keeping track of small outputs here
 
+## Things to do
+
+- After extracting all coordinates, assemble them into a single hdf that is organized like the ANI energies, maybe compute the DFT energies of those things(?) and compare to the ANI energies of those molecules.
+- Note that `extract_general.py` is specifically for extracting coordinates that are *NOT* glycine or alanine.
+
+## Things that are done
+
 Assigning stereochemistry with RDKit:
     (ani) nickterrel WIP % python assign_stereochemistry.py
 
