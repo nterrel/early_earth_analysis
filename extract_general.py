@@ -6,7 +6,6 @@ import re
 import os
 import psutil
 import gc
-from multiprocessing import Pool, cpu_count
 
 
 def log_system_usage():
@@ -53,12 +52,9 @@ def process_file(file_path, topology, dcd_map, output_dir, test_limit=None):
 def main(topology_path, dcd_path, parquet_dir, output_dir):
     topology = load_topology(topology_path)
     dcd_map = setup_dcd_mapping(dcd_path)
-    parquet_files = [os.path.join(parquet_dir, f) for f in sorted(
-        os.listdir(parquet_dir)) if f.endswith('.pq')]
-
-    with Pool(processes=cpu_count()) as pool:
-        pool.starmap(process_file, [
-                     (f, topology, dcd_map, output_dir) for f in parquet_files])
+    parquet_files = [os.path.join(parquet_dir, f) for f in sorted(os.listdir(parquet_dir)) if f.endswith('.pq')]
+    for f in parquet_files:
+        process_file(f, topology, dcd_map, output_dir)
     print("All files processed.")
 
 
