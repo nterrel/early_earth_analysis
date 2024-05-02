@@ -26,12 +26,11 @@ bond_data_stretched = {
 box_lengths = [557, 557, 557]
 
 mol_data = pd.read_parquet('molecule_data.pq')
-print(mol_data[mol_data['name'] == 'Alanine'])
-serialized_graph = mol_data[mol_data['name'] == 'Alanine']['graph'][0]
-standard_graph = pickle.loads(serialized_graph)
-ref_atom_types = [species_dict[attrs['atomic_number']]
-                  for _, attrs in standard_graph.nodes(data=True)]
-print(ref_atom_types)
+reference_graphs = {}
+for index, row in mol_data.iterrows():
+    graph = pickle.loads(row['graph'])
+    reference_graphs[row['name']] = graph
+
 for node, data in standard_graph.nodes(data=True):
     atomic_num = data['atomic_number']
     # Update the node data to include 'element'

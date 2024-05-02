@@ -19,6 +19,8 @@ def extract_and_assign_coordinates(row, topology):
 
 def process_group(group, topology):
     tqdm.pandas(desc=f"Extracting coordinates for {group.name}")
+    if 'coordinates' not in group.columns:
+        group['coordinates'] = np.nan
     group['coordinates'] = group.progress_apply(lambda row: extract_and_assign_coordinates(row, topology), axis=1)
     return group
 

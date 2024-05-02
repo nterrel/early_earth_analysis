@@ -6,11 +6,12 @@ Converted this new .xyz to .sdf and .pdb (in that order, pdb made with sdf) via 
 `obabel -i xyz reordered_alanines.xyz -o sdf -O reordered_alanines.sdf`
 `obabel -isdf reordered_alanines.sdf -opdb -O reordered_alanines.pdb`
 
-Steps Ignacio took to unwrap and align:
+~~Steps Ignacio took to unwrap and align:~~
 
-1. With the first conformer (in pdb format), use ambertools antechamber to create a mol2
-2. Create a topology in tleap
-3. Using that topology information, and the following cpptraj code:
+~~1. With the first conformer (in pdb format), use ambertools antechamber to create a mol2~~
+~~2. Create a topology in tleap~~
+~~3. Using that topology information, and the following cpptraj code:~~
+**Note: The above did not work.**
 
 ```cpp
 parm ala.prmtop

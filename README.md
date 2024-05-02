@@ -2,15 +2,15 @@
 
 Source (local) repository housed on HiPerGator at `/red/roitberg/nick_analysis/`
 
-
-## Usage and some notes:
+## Usage and some notes
 
 The topology of the 22.8M atom simulation is saved from frame 0 of the 0.0ns .dcd trajectory file
+
 - Loading this topology from the original pdb is very slow (approx 8-10 minutes)
 - Loading from a .h5 slice of the first frame of trajectory data takes ~200 sec with the default MDTraj function
 - Loading from this .h5 slice with 'top_loader.py' (thanks Ignacio) takes approximately 85 sec
 
-## Scripts found in this directory:
+## Scripts found in this directory
 
 - `batch_submit.sh`
   - Used to submit the extraction script such that different trajectory splits (0.1ns each) are run in parallel
@@ -21,10 +21,10 @@ The topology of the 22.8M atom simulation is saved from frame 0 of the 0.0ns .dc
 - `top_loader.py`
   - This script is used to load a topology in MDTraj from a single-frame slice of the trajectory (Using the zeroth-frame of the 0.0ns traj file, stored in 'traj_top_0.0ns.h5'). The purpose is to load in a massive (22.8M atom) topology more efficiently than the pdb loader
 
-## Other files located here:
+## Other files located here
 
 - `22M_topology.pdb`:
-  - Original topology Richard used for his simulation 
+  - Original topology Richard used for his simulation
 
 - `merged_formula.pq`:
   - A dataframe containing all 'molecules' found in the graph search. No atom_indices are included, but frame#, formula are saved here for every graph found at every frame (~570M rows, big dataframe)
@@ -32,8 +32,7 @@ The topology of the 22.8M atom simulation is saved from frame 0 of the 0.0ns .dc
 - `traj_top_0.0ns.h5`:
   - The hdf stored topology used with the 'top_loader.py' script
 
-## Some directories and their contents: 
-
+## Some directories and their contents
 
 - `Alanine`:
   - Contains scripts, outputs, analysis related to extracted alanine molecules
@@ -44,7 +43,7 @@ The topology of the 22.8M atom simulation is saved from frame 0 of the 0.0ns .dc
 
 - `Old_outputs`:
   - Not saved to remote repo
-  - .txt and .log files from scripts, only keeping for timing/job execution details 
+  - .txt and .log files from scripts, only keeping for timing/job execution details
 
 - `Scripts`:
   - (WIP) Location for general scripts (after adapting from Ala stuff)
