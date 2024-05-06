@@ -4,12 +4,28 @@ import ase
 import logging
 import pickle
 import pandas as pd
-import sys
+import glob
+import os
+import re
 
 logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s - %(levelname)s - %(message)s')
 
 # NOTE: To do: if any i,j coordinates are more than n_atoms*max_bond_data apart, set structure aside (with comment line) for manual check
+
+
+def normalize_name(name):
+    """Normalize molecule names to match keys in reference_graphs. Handles special cases and dipeptides."""
+    name = name.lower().replace('_', ' ')
+    dipeptide_pattern = re.compile(r"(\w+)yl(\w+)")
+    match = dipeptide_pattern.match(name)
+    if match:
+        normalized_name = match.group(1) + " " + match.group(2)
+    else:
+        normalized_name = name.replace(' ', '_')
+    logging.debug(f"Normalized name: {normalized_name}")
+    return normalized_name
+
 
 species_dict = {1: "H", 6: "C", 7: "N", 8: "O"}
 bond_data = {
@@ -25,30 +41,32 @@ bond_data_stretched = {
 
 box_lengths = [557, 557, 557]
 
-mol_data = pd.read_parquet('molecule_data.pq')
-reference_graphs = {}
-for index, row in mol_data.iterrows():
-    graph = pickle.loads(row['graph'])
-    reference_graphs[row['name']] = graph
+mol_data = pd.read_parquet('/red/roitberg/nick_analysis/molecule_data.pq')
+reference_graphs = {row['name']: pickle.loads(
+    row['graph']) for index, row in mol_data.iterrows()}
 
-for node, data in standard_graph.nodes(data=True):
-    atomic_num = data['atomic_number']
-    # Update the node data to include 'element'
-    data['element'] = species_dict[atomic_num]
-    # Optionally, remove the 'atomic_number' field to avoid confusion
-    # del data['atomic_number']
 
+def update_graph_with_elements(graph):
+    """Updates reference graph with element symbols based on atomic numbers."""
+    for node, data in graph.nodes(data=True):
+        data['element'] = species_dict[data['atomic_number']]
+    logging.debug("Graph elements updated.")
+    return graph
+
+
+def add_element_pairs_to_edges(graph):
+    """Adds element pair attributes to the edges of the graph for easier comparison."""
+    for (node1, node2) in graph.edges():
+        element1 = graph.nodes[node1]['element']
+        element2 = graph.nodes[node2]['element']
+        graph.edges[node1,
+                    node2]['element_pair'] = '-'.join(sorted([element1, element2]))
+    logging.debug("Element pairs added to graph edges.")
 
 
 def read_xyz_file(filename: str):
-    """_summary_
-
-    Args:
-        filename (_type_): _description_
-
-    Returns:
-        _type_: _description_
-    """
+    """Reads XYZ file and extracts atom types and coordinates."""
+    structures, comments = [], []
     with open(filename, 'r') as file:
         # Remove empty lines and strip whitespace
         lines = [line.strip() for line in file if line.strip()]
@@ -112,16 +130,6 @@ def create_networkx_graph(coordinates, atom_types, bond_data_stretched, species_
                 # logging.debug(f"Creating bond between {species_dict[atomic_nums[i]]}-{species_dict[atomic_nums[j]]} with distance {dist} and threshold {bond_data_stretched[pair_key]}")
                 G.add_edge(i, j)
     return G
-
-
-# Function to add 'element_pair' attribute to graph edges
-def add_element_pairs_to_edges(graph):
-    for (node1, node2) in graph.edges():
-        element1 = graph.nodes[node1]['element']
-        element2 = graph.nodes[node2]['element']
-        # Sort the elements alphabetically before creating the label
-        edge_label = '-'.join(sorted([element1, element2]))
-        graph.edges[node1, node2]['element_pair'] = edge_label
 
 
 def reorder_structure_to_match_reference(ref_graph, target_graph, target_atom_types, target_coordinates):
@@ -204,35 +212,44 @@ def compare_graph_bonds(ref_graph, target_graph, ref_atom_types, target_atom_typ
     print("Missing Bonds in Target Graph:", missing_bonds)
 
 
-add_element_pairs_to_edges(standard_graph)
+def process_files(xyz_directory):
+    for xyz_file in glob.glob(os.path.join(xyz_directory, 'all_*.xyz')):
+        molecule_name = normalize_name(os.path.basename(xyz_file))
+        if molecule_name in reference_graphs:
+            ref_graph = reference_graphs[molecule_name]
+            ref_graph = update_graph_with_elements(ref_graph)
+            add_element_pairs_to_edges(ref_graph)
+            structures, comments = read_xyz_file(xyz_file)
 
-structures, comments = read_xyz_file('all_alanines.xyz')
+            successful_structures = []
+            failed_structures = []
 
-reordered_structures = []
-successful_comments = []
-failed_structures = []
-failed_comments = []
-count = 0
+            for index, (atom_types, coordinates) in enumerate(structures):
+                target_graph = create_networkx_graph(
+                    coordinates, atom_types, bond_data_stretched, species_dict, box_lengths)
+                reordered_atom_types, reordered_coordinates = reorder_structure_to_match_reference(
+                    ref_graph, target_graph, atom_types, coordinates)
 
-# FIX INDEXING IF YOU FIGURE OUT HOW TO MATCH FIRST STRUCTURE
-for index, (atom_types, coordinates) in enumerate(structures[1:], start=1):
-    logging.debug(f"Processing structure {index}/{len(structures)}")
-    target_graph = create_networkx_graph(
-        coordinates, atom_types, bond_data_stretched, species_dict, box_lengths)
-    add_element_pairs_to_edges(target_graph)
-    # compare_graph_bonds(standard_graph, target_graph, ref_atom_types, atom_types)
-    reordered_atom_types, reordered_coordinates = reorder_structure_to_match_reference(
-        standard_graph, target_graph, atom_types, coordinates)
-    if reordered_atom_types and reordered_coordinates:  # Checks if not None and not empty
-        reordered_structures.append(
-            (reordered_atom_types, reordered_coordinates, comments[index]))
-        logging.info(f"Structure {index} reordered and added.")
-    else:
-        # Collect failed structures and their comments
-        failed_structures.append((atom_types, coordinates, comments[index]))
-        logging.warning(
-            f"Structure {index} could not be reordered and has been set aside for manual inspection.")
-    # break
+                if reordered_atom_types and reordered_coordinates:  # Checks if not None and not empty
+                    successful_structures.append(
+                        (reordered_atom_types, reordered_coordinates, comments[index]))
+                    logging.info(
+                        f"Structure {index} reordered and added for {molecule_name}.")
+                else:
+                    failed_structures.append(
+                        (atom_types, coordinates, comments[index]))
+                    logging.warning(
+                        f"Structure {index} could not be reordered for {molecule_name} and has been set aside for manual inspection.")
 
-write_xyz_file('reordered_alanines.xyz', reordered_structures)
-write_xyz_file_failed('failed_ala_coord_remap.xyz', failed_structures)
+            if successful_structures:
+                write_xyz_file(
+                    f'reordered_{molecule_name}.xyz', successful_structures)
+            if failed_structures:
+                write_xyz_file_failed(
+                    f'failed_{molecule_name}.xyz', failed_structures)
+        else:
+            logging.warning(f"No reference graph found for {molecule_name}")
+
+
+directory = '/red/roitberg/nick_analysis/Extracts/Others/XYZs'
+process_files(directory)
