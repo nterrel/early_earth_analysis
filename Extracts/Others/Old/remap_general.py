@@ -8,7 +8,7 @@ import glob
 import os
 import re
 
-logging.basicConfig(level=logging.WARNING,
+logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s - %(levelname)s - %(message)s')
 
 # NOTE: To do: if any i,j coordinates are more than n_atoms*max_bond_data apart, set structure aside (with comment line) for manual check
@@ -16,15 +16,14 @@ logging.basicConfig(level=logging.WARNING,
 
 def normalize_name(name):
     """Normalize molecule names to match keys in reference_graphs. Handles special cases and dipeptides."""
-    original_name = name
-    name = name.lower().replace('all_', '').replace('.xyz', '').replace('_', ' ')
+    name = name.lower().replace('_', ' ')
     dipeptide_pattern = re.compile(r"(\w+)yl(\w+)")
     match = dipeptide_pattern.match(name)
     if match:
-        normalized_name = match.group(1).capitalize() + " " + match.group(2).capitalize()
+        normalized_name = match.group(1) + " " + match.group(2)
     else:
-        normalized_name = ' '.join(word.capitalize() for word in name.split(' '))
-    logging.debug(f"Normalized name from '{original_name}' to '{normalized_name}'")
+        normalized_name = name.replace(' ', '_')
+    logging.debug(f"Normalized name: {normalized_name}")
     return normalized_name
 
 
@@ -42,15 +41,16 @@ bond_data_stretched = {
 
 box_lengths = [557, 557, 557]
 
-mol_data = pd.read_parquet('/red/roitberg/nick_analysis/all_mol_data.pq')
+mol_data = pd.read_parquet('/red/roitberg/nick_analysis/molecule_data.pq')
 reference_graphs = {row['name']: pickle.loads(
     row['graph']) for index, row in mol_data.iterrows()}
-print(reference_graphs)
+
 
 def update_graph_with_elements(graph):
     """Updates reference graph with element symbols based on atomic numbers."""
     for node, data in graph.nodes(data=True):
         data['element'] = species_dict[data['atomic_number']]
+    logging.debug("Graph elements updated.")
     return graph
 
 
@@ -61,15 +61,18 @@ def add_element_pairs_to_edges(graph):
         element2 = graph.nodes[node2]['element']
         graph.edges[node1,
                     node2]['element_pair'] = '-'.join(sorted([element1, element2]))
+    logging.debug("Element pairs added to graph edges.")
 
 
 def read_xyz_file(filename: str):
     """Reads XYZ file and extracts atom types and coordinates."""
-    logging.info(f"Reading XYZ file: {filename}")
     structures, comments = [], []
     with open(filename, 'r') as file:
         # Remove empty lines and strip whitespace
         lines = [line.strip() for line in file if line.strip()]
+
+    structures = []
+    comments = []
     i = 0
     while i < len(lines):
         try:
@@ -96,7 +99,6 @@ def read_xyz_file(filename: str):
 
         structures.append((atom_types, coordinates))
         i += num_atoms + 2  # Move to the next structure
-    logging.info(f"Read {len(structures)} structures from {filename}.")
     return structures, comments
 
 
@@ -104,6 +106,7 @@ def pbc_distance(pos1, pos2, box_lengths):
     # Calculate distance vector considering periodic boundaries
     delta = np.abs(pos1 - pos2)
     delta = np.where(delta > 0.5 * box_lengths, delta - box_lengths, delta)
+    # Compute the Euclidean distance with the adjusted delta
     return np.linalg.norm(delta)
 
 
@@ -122,17 +125,24 @@ def create_networkx_graph(coordinates, atom_types, bond_data_stretched, species_
             elem_i = species_dict[atomic_nums[i]]
             elem_j = species_dict[atomic_nums[j]]
             pair_key = ''.join(sorted([elem_i, elem_j]))
+            # logging.debug(f"Pre-check bond between atoms {i} ({elem_i}) and {j} ({elem_j}) with distance {dist}. Pair key: {pair_key}")
             if pair_key in bond_data_stretched and dist <= bond_data_stretched[pair_key]:
+                # logging.debug(f"Creating bond between {species_dict[atomic_nums[i]]}-{species_dict[atomic_nums[j]]} with distance {dist} and threshold {bond_data_stretched[pair_key]}")
                 G.add_edge(i, j)
     return G
 
 
 def reorder_structure_to_match_reference(ref_graph, target_graph, target_atom_types, target_coordinates):
+    logging.debug("Starting isomorphism check and reordering process.")
     if nx.is_isomorphic(ref_graph, target_graph):
         edge_match = nx.isomorphism.categorical_edge_match(
             'element_pair', default='')
         node_match = nx.isomorphism.categorical_node_match('element', '')
-        matcher = nx.isomorphism.GraphMatcher(ref_graph, target_graph, node_match=node_match, edge_match=edge_match)
+        matcher = nx.isomorphism.GraphMatcher(
+            ref_graph,
+            target_graph,
+            node_match=node_match,
+            edge_match=edge_match)
 
         if matcher.is_isomorphic():
             mapping = matcher.mapping  # Mapping from target to reference
@@ -176,12 +186,36 @@ def write_xyz_file_failed(filename, structures_comments):
                 file.write(f"{atom} {x:.6f} {y:.6f} {z:.6f}\n")
 
 
+def compare_graph_bonds(ref_graph, target_graph, ref_atom_types, target_atom_types):
+    # Extracting bonds and their atom types for the reference graph
+    ref_bonds = set()
+    for u, v in ref_graph.edges():
+        atom_u = ref_atom_types[u]
+        atom_v = ref_atom_types[v]
+        bond = tuple(sorted([atom_u, atom_v]))
+        ref_bonds.add(bond)
+
+    # Extracting bonds and their atom types for the target graph
+    target_bonds = set()
+    for u, v in target_graph.edges():
+        atom_u = target_atom_types[u]
+        atom_v = target_atom_types[v]
+        bond = tuple(sorted([atom_u, atom_v]))
+        target_bonds.add(bond)
+
+    # Identifying missing bonds in the target graph
+    missing_bonds = ref_bonds - target_bonds
+
+    # Logging the results
+    print("Reference Graph Bonds:", ref_bonds)
+    print("Target Graph Bonds:", target_bonds)
+    print("Missing Bonds in Target Graph:", missing_bonds)
+
+
 def process_files(xyz_directory):
-    for xyz_file in glob.glob(os.path.join(xyz_directory, '*.xyz')):
-        logging.debug(f"Processing file: {xyz_file}")
+    for xyz_file in glob.glob(os.path.join(xyz_directory, 'all_*.xyz')):
         molecule_name = normalize_name(os.path.basename(xyz_file))
         if molecule_name in reference_graphs:
-            logging.debug(f"Found reference graph for: {molecule_name}")
             ref_graph = reference_graphs[molecule_name]
             ref_graph = update_graph_with_elements(ref_graph)
             add_element_pairs_to_edges(ref_graph)
@@ -193,7 +227,6 @@ def process_files(xyz_directory):
             for index, (atom_types, coordinates) in enumerate(structures):
                 target_graph = create_networkx_graph(
                     coordinates, atom_types, bond_data_stretched, species_dict, box_lengths)
-                add_element_pairs_to_edges(target_graph)
                 reordered_atom_types, reordered_coordinates = reorder_structure_to_match_reference(
                     ref_graph, target_graph, atom_types, coordinates)
 
@@ -213,7 +246,7 @@ def process_files(xyz_directory):
                     f'reordered_{molecule_name}.xyz', successful_structures)
             if failed_structures:
                 write_xyz_file_failed(
-                    f'Broke/failed_{molecule_name}.xyz', failed_structures)
+                    f'failed_{molecule_name}.xyz', failed_structures)
         else:
             logging.warning(f"No reference graph found for {molecule_name}")
 

@@ -17,6 +17,7 @@ Old_outputs
 *.pq
 *.log
 *.txt
+*.err
 *.xyz
 
 
