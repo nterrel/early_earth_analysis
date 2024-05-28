@@ -7,6 +7,7 @@ import pandas as pd
 import glob
 import os
 import re
+import sys
 
 logging.basicConfig(level=logging.WARNING,
                     format='%(asctime)s - %(levelname)s - %(message)s')
@@ -45,7 +46,7 @@ box_lengths = [557, 557, 557]
 mol_data = pd.read_parquet('/red/roitberg/nick_analysis/all_mol_data.pq')
 reference_graphs = {row['name']: pickle.loads(
     row['graph']) for index, row in mol_data.iterrows()}
-print(reference_graphs)
+logging.debug(f"Reference graph keys: {reference_graphs.keys()}")
 
 def update_graph_with_elements(graph):
     """Updates reference graph with element symbols based on atomic numbers."""

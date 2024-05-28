@@ -10,7 +10,10 @@ The topology of the 22.8M atom simulation is saved from frame 0 of the 0.0ns .dc
 - Loading from a .h5 slice of the first frame of trajectory data takes ~200 sec with the default MDTraj function
 - Loading from this .h5 slice with 'top_loader.py' (thanks Ignacio) takes approximately 85 sec
 
-## Scripts found in this directory
+## Scripts found in this directory NOTE: UPDATE SINCE THESE HAVE BEEN MOVED
+
+- `extract_trace_frames.py`
+  - This script can extract a specified list of atom indices from a specified number of frames. Left in this directory as `top_loader.py` is a necessary import. Extracts coordinates to the `./Mol_trace/` directory.
 
 - `batch_submit.sh`
   - Used to submit the extraction script such that different trajectory splits (0.1ns each) are run in parallel
