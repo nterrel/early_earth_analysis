@@ -15,12 +15,6 @@ The topology of the 22.8M atom simulation is saved from frame 0 of the 0.0ns .dc
 - `extract_trace_frames.py`
   - This script can extract a specified list of atom indices from a specified number of frames. Left in this directory as `top_loader.py` is a necessary import. Extracts coordinates to the `./Mol_trace/` directory.
 
-- `batch_submit.sh`
-  - Used to submit the extraction script such that different trajectory splits (0.1ns each) are run in parallel
-
-- `extract_coordinates.py`
-  - This script opens a trajectory file and extracts coordinates of 'found' molecules (from the pubchem dataframe)
-
 - `top_loader.py`
   - This script is used to load a topology in MDTraj from a single-frame slice of the trajectory (Using the zeroth-frame of the 0.0ns traj file, stored in 'traj_top_0.0ns.h5'). The purpose is to load in a massive (22.8M atom) topology more efficiently than the pdb loader
 
@@ -28,6 +22,10 @@ The topology of the 22.8M atom simulation is saved from frame 0 of the 0.0ns .dc
 
 - `22M_topology.pdb`:
   - Original topology Richard used for his simulation
+
+- `all_mol_data.pq`:
+  - Dataframe containing molecules of interest: sugars, amino acids, nucleobases, etc.
+  - Also contains all possible dimers of the above molecules of interest (357 total molecules)
 
 - `merged_formula.pq`:
   - A dataframe containing all 'molecules' found in the graph search. No atom_indices are included, but frame#, formula are saved here for every graph found at every frame (~570M rows, big dataframe)
@@ -37,16 +35,25 @@ The topology of the 22.8M atom simulation is saved from frame 0 of the 0.0ns .dc
 
 ## Some directories and their contents
 
-- `Alanine`:
-  - Contains scripts, outputs, analysis related to extracted alanine molecules
+- `Extracts`:
+  - Contains scripts, outputs, analysis related to extracted molecules
 
-- `Coordinate_hdf`:
+- `HDF_coord`:
   - Not saved to remote repo
   - (WIP) Here is where I want to include HDFs with coordinates for ALL 'found' molecules in the EE simulation. Needs work, there's only a few h5 files here, the others have not been generated yet
+
+- `Misc_parquets`:
+  - Some analysis of the found molecules, largest molecule over time, largest molecule per frame, counts of all found formulas.
+
+- `Mol_trace`:
+  - Directory to dump coordinates for the 'trace' alanine formation used to produce that figure Adrian asked for.
 
 - `Old_outputs`:
   - Not saved to remote repo
   - .txt and .log files from scripts, only keeping for timing/job execution details
+
+- `Restart`
+  - Scripts, simulation files related to restarting the EE simulation runs in order to minimize frames and re-run graph analysis.
 
 - `Scripts`:
   - (WIP) Location for general scripts (after adapting from Ala stuff)

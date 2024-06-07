@@ -3,6 +3,7 @@
 The 22.8M ANI-rx Early Earth simulation showed the formation of many molecules, including 450K alanine molecules. This directory includes scripts pertaining to the extraction and characterization of these molecules.
 
 A few files of alanine coordinates exist here:
+
 - `all_alanines.xyz` is a concatenated list of raw output coordinates (ordered arbitrarily by inital graph search)
 - `reordered_alanines.xyz` is a slightly smaller set of things that actually match an alanine graph, ordered in an exact format.
 - `alanines_final.xyz` is the final set of alanine molecules, filtered, rearranged, unwrapped (pbc conditions) and aligned. 

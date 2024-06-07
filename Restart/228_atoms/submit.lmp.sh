@@ -1,13 +1,13 @@
 #!/bin/bash
 #SBATCH --job-name=lammps_ani          # Job name
-#SBATCH --ntasks=1                     # Number of MPI tasks (i.e. processes)
+#SBATCH --ntasks=2                     # Number of MPI tasks (i.e. processes)
 #SBATCH --nodes=1                      # Maximum number of nodes to be allocated
-#SBATCH --ntasks-per-node=1            # Maximum number of tasks on each node
+#SBATCH --ntasks-per-node=2            # Maximum number of tasks on each node
 #SBATCH --cpus-per-task=1              # Number of cores per MPI task
-#SBATCH --partition=hpg-ai
+#SBATCH --partition=gpu	 # This doesn't work -- hpg-ai submits to the queue but just sits there? 
 #SBATCH --qos=roitberg
 #SBATCH --account=roitberg
-#SBATCH --gres=gpu:1
+#SBATCH --gres=gpu:a100:2
 #SBATCH --mem-per-cpu=16gb             # Memory (i.e. RAM) per processor
 #SBATCH --time=8:00:00                 # Wall time limit (days-hrs:min:sec)
 #SBATCH --output=lammps_ani_%j_1.log   # Path to the standard output and error files relative to the working dir
@@ -20,7 +20,7 @@ echo "Number of Nodes Allocated      = $SLURM_JOB_NUM_NODES"
 echo "Number of Tasks Allocated      = $SLURM_NTASKS"
 echo "Number of Cores/Task Allocated = $SLURM_CPUS_PER_TASK"
 
-module load cuda/11.4.3 gcc/9.3.0 openmpi/4.0.5 cmake/3.21.3 git/2.30.1 netcdf/4.7.2
+module load cuda/11.4.3 gcc/9.3.0 openmpi/4.1.5 cmake/3.21.3 git/2.30.1
 export LAMMPS_ANI_ROOT="/blue/roitberg/apps/lammps-ani"
 export LAMMPS_ROOT=${LAMMPS_ANI_ROOT}/external/lammps/
 export LAMMPS_PLUGIN_PATH=${LAMMPS_ANI_ROOT}/build/

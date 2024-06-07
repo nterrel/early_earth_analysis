@@ -3,12 +3,14 @@ __pycache__
 _broken
 _testing
 
-Alanine/Ala_df
-Alanine/HDF_coord
+Extracts/Alanine/HDF_coord
 HDF_coord
 Split_parquets
 Sync_to_mac
 Old_outputs
+Restart/228_atoms/idk
+Restart/228_atoms/logs
+Restart/228k_atoms/logs
 
 # File extensions to ignore: 
 *.dcd
@@ -19,5 +21,6 @@ Old_outputs
 *.txt
 *.err
 *.xyz
-
+*.conf
+*.data
 
