@@ -9,7 +9,7 @@ def submit_job(traj_file, top_file, mol_pq, time_offset, num_segments, segment_i
     job_name = f"cumolfind_{os.path.splitext(os.path.basename(traj_file))[0]}_segment_{segment_index:0{len(str(num_segments))}d}_of_{num_segments}"
     output_filename = f"logs/{job_name}_%j.log"
     os.makedirs(os.path.dirname(output_filename), exist_ok=True)
-    num_gpus = 1
+    num_gpus = 4
     nodes = 1
     ntasks_per_node = num_gpus
     gres = f"gpu:a100:{1}"
