@@ -18,9 +18,12 @@ Restart/228k_atoms/logs
 *.pdb
 *.pq
 *.log
+*.out
 *.txt
 *.err
 *.xyz
 *.conf
 *.data
+*.csv
+
 
