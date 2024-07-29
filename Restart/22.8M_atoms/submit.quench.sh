@@ -41,7 +41,7 @@ echo using python: $(which python)
 # python run_one.py data/mixture_22800000.data --kokkos --num_gpus=1024 --input_file=in.22M.lammps --log_dir=/red/roitberg/22M_20231222_prodrun --ani_model_file='ani1x_nr.pt' --run_name=early_earth_22M --ani_num_models=8 --timestep=0.25 --run
 
 # restart 
-python run_one.py \
+python run_22.8M.py \
        	data/mixture_22800000.data \
        	--kokkos \
 	--num_gpus=992 \

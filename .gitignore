@@ -11,6 +11,7 @@ Old_outputs
 Restart/228_atoms/idk
 Restart/228_atoms/logs
 Restart/228k_atoms/logs
+Restart/22.8M_atoms/test_analyze*
 
 # File extensions to ignore: 
 *.dcd

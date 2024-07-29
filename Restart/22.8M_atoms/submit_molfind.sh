@@ -3,7 +3,7 @@
 #SBATCH --output=molfind_%j.out       # Output file
 #SBATCH --error=molfind_%j.err        # Error file
 #SBATCH --partition=gpu               # Partition name
-#SBATCH --mem=400gb                   # Memory per node
+#SBATCH --mem=256gb                   # Memory per node
 #SBATCH --time=36:00:00               # Time limit
 #SBATCH --gres=gpu:a100:1             # Number of GPUs
 #SBATCH --ntasks=1                    # Number of tasks (processes)
@@ -25,13 +25,12 @@ source $(conda info --base)/etc/profile.d/conda.sh
 conda activate rapids-23.10
 echo using python: $(which python)
 
-# Run the cumolfind-molfind command (NOTE: this is on 'sliced_trajectory.dcd' which is frames 101000-102000 of the 228k traj)
-cumolfind-molfind /red/roitberg/nick_analysis/trimmed_1608-1629_1.2ns.dcd \
+cumolfind-molfind /red/roitberg/nick_analysis/Trimmed_frames/frame_1629.dcd \
                   /red/roitberg/nick_analysis/Restart/22.8M_atoms/mixture_22800000.pdb \
                   /red/roitberg/nick_analysis/all_mol_data.pq \
                   --dump_interval=50 \
                   --timestep=0.25 \
-                  --output_dir=./test_analyze2 \
+                  --output_dir=./test_analyze3 \
                   --num_segments=1 \
 		          --segment_index=0
                   
