@@ -30,7 +30,7 @@ cumolfind-molfind /red/roitberg/nick_analysis/Trimmed_frames/frame_1629.dcd \
                   /red/roitberg/nick_analysis/all_mol_data.pq \
                   --dump_interval=50 \
                   --timestep=0.25 \
-                  --output_dir=./test_analyze3 \
+                  --output_dir=./test_analyze4 \
                   --num_segments=1 \
 		          --segment_index=0
                   
