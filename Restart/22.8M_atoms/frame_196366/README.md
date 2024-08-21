@@ -17,8 +17,10 @@
 `timestep       ${timestep}`
 * changed thermo frequency from 50 to 10 since I'm only running 100 steps
 
-## Molfind stuff: 
+## Molfind stuff:
 
 * molfind_41492932 files are before quench, these could not run because of the following error:
 `RuntimeError: nonzero is not supported for tensors with more than INT_MAX elements,   file a support request`
+Turns out I was actually using my modified molfind program on the branch `origin/nick`, after switching to `origin/cumolfind_modified` this should work properly.
+* molfind_41682856 files are before quench, with the proper branch.
 

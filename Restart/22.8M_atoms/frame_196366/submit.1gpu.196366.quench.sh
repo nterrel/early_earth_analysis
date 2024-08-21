@@ -1,15 +1,12 @@
 #!/bin/bash
 #SBATCH --job-name=lammps_ani        # Job name
-#SBATCH --ntasks=16                  # Number of MPI tasks (i.e. processes)
-#SBATCH --nodes=2                    # Maximum number of nodes to be allocated
-#SBATCH --ntasks-per-node=8          # Maximum number of tasks on each node
+#SBATCH --ntasks=1                   # Number of MPI tasks (i.e. processes)
+#SBATCH --nodes=1                    # Maximum number of nodes to be allocated
+#SBATCH --ntasks-per-node=1          # Maximum number of tasks on each node
 #SBATCH --cpus-per-task=1            # Number of cores per MPI task
-#SBATCH --partition=hpg-ai
-#SBATCH --qos=roitberg
-#SBATCH --account=roitberg
-#SBATCH --reservation=roitberg-phase2
-#SBATCH --gres=gpu:8
-#SBATCH --mem=200gb                  # Memory (i.e. RAM) per processor
+#SBATCH --partition=gpu
+#SBATCH --gres=gpu:1
+#SBATCH --mem=256gb                  # Memory (i.e. RAM) per processor
 #SBATCH --exclude=c0900a-s11
 #SBATCH --mail-type=END,FAIL         # Mail events (NONE, BEGIN, END, FAIL, ALL)
 #SBATCH --mail-user=nterrel@ufl.edu  # Where to send mail
@@ -41,10 +38,10 @@ echo using python: $(which python)
 # python run_one.py data/mixture_22800000.data --kokkos --num_gpus=1024 --input_file=in.22M.lammps --log_dir=/red/roitberg/22M_20231222_prodrun --ani_model_file='ani1x_nr.pt' --run_name=early_earth_22M --ani_num_models=8 --timestep=0.25 --run
 
 # restart 
-python run_22.8M.py \
+python /red/roitberg/nick_analysis/Restart/22.8M_atoms/frame_196366/run_22.8M_196366.py \
        	/red/roitberg/nick_analysis/Restart/22.8M_atoms/frame_196366/frame_196366.data \
        	--kokkos \
-	--num_gpus=16 \
+	--num_gpus=1 \
 	--input_file=/red/roitberg/nick_analysis/Restart/22.8M_atoms/frame_196366/in.22M.quench.lammps \
 	--log_dir=/red/roitberg/nick_analysis/Restart/22.8M_atoms/frame_196366/logs \
 	--ani_model_file='ani1x_nr.pt' \
