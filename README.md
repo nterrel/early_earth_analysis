@@ -12,8 +12,23 @@ The topology of the 22.8M atom simulation is saved from frame 0 of the 0.0ns .dc
 
 ## Scripts found in this directory NOTE: UPDATE SINCE THESE HAVE BEEN MOVED
 
+- `convert_dcd_to_data.py`
+  - Small script to load a .dcd traj file and create a .data file for use in restarting the simulation run from this frame. Note that the velocities are not preserved, since there are not restart checkpoints.
+
 - `extract_trace_frames.py`
   - This script can extract a specified list of atom indices from a specified number of frames. Left in this directory as `top_loader.py` is a necessary import. Extracts coordinates to the `./Mol_trace/` directory.
+
+- `join_traj_frames.py`
+  - Script to combine single frames into a continuous traj -- created because it is easier to split off one specific frame than it is to split a range of frames. 
+
+- `last_frame.py`
+  - Script to extract the last frame from a trajectory file.
+
+- `split_ala_frames.py`
+  - Isolate (randomly selected) ala-containing frames into individual dcd files.
+
+- `split_traj.py`
+  - Create a small trajectory for testing molfind program on (~20 frames).
 
 - `top_loader.py`
   - This script is used to load a topology in MDTraj from a single-frame slice of the trajectory (Using the zeroth-frame of the 0.0ns traj file, stored in 'traj_top_0.0ns.h5'). The purpose is to load in a massive (22.8M atom) topology more efficiently than the pdb loader
@@ -28,7 +43,7 @@ The topology of the 22.8M atom simulation is saved from frame 0 of the 0.0ns .dc
   - Also contains all possible dimers of the above molecules of interest (357 total molecules)
 
 - `merged_formula.pq`:
-  - A dataframe containing all 'molecules' found in the graph search. No atom_indices are included, but frame#, formula are saved here for every graph found at every frame (~570M rows, big dataframe)
+  - A dataframe containing all 'molecules' found in the graph search.\ No atom_indices are included, but frame#, formula are saved here for every graph found at every frame (~570M rows, big dataframe)
 
 - `traj_top_0.0ns.h5`:
   - The hdf stored topology used with the 'top_loader.py' script
@@ -37,6 +52,7 @@ The topology of the 22.8M atom simulation is saved from frame 0 of the 0.0ns .dc
 
 - `Extracts`:
   - Contains scripts, outputs, analysis related to extracted molecules
+  - Subdirectories include Alanine, Glycine (not very populated, placeholder for analysis of the bulk of 'found' molecules), and Others (found molecules which are not glycine or alanine)
 
 - `HDF_coord`:
   - Not saved to remote repo
@@ -54,6 +70,7 @@ The topology of the 22.8M atom simulation is saved from frame 0 of the 0.0ns .dc
 
 - `Restart`
   - Scripts, simulation files related to restarting the EE simulation runs in order to minimize frames and re-run graph analysis.
+  - 228_atoms / 228k_atoms / 22.8M_atoms directories contain files needed for restarting EE sim run for cumolfind analysis of synthesized molecules.
 
 - `Scripts`:
   - (WIP) Location for general scripts (after adapting from Ala stuff)
@@ -65,6 +82,9 @@ The topology of the 22.8M atom simulation is saved from frame 0 of the 0.0ns .dc
 - `Sync_to_mac`:
   - Not saved to remote repo
   - Used to send files (via sshfs) between my MacBook and this directory on HPG
+
+- `Trimmed_frames`:
+  - Spot to dump isolated frames of the trajectory for further analysis of specific frames.
 
 - `_broken`:
   - Not saved to remote repo
