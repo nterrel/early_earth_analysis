@@ -6,7 +6,7 @@
 #SBATCH --cpus-per-task=1            # Number of cores per MPI task
 #SBATCH --partition=gpu
 #SBATCH --gres=gpu:8
-#SBATCH --mem=200gb                  # Memory (i.e. RAM) per processor
+#SBATCH --mem=200gb                  # Memory (i.e. RAM) per node
 #SBATCH --exclude=c0900a-s11
 #SBATCH --mail-type=END,FAIL         # Mail events (NONE, BEGIN, END, FAIL, ALL)
 #SBATCH --mail-user=nterrel@ufl.edu  # Where to send mail

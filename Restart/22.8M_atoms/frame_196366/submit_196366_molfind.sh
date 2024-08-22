@@ -30,7 +30,7 @@ cumolfind-molfind /red/roitberg/nick_analysis/Restart/22.8M_atoms/frame_196366/f
                   /red/roitberg/nick_analysis/all_mol_data.pq \
                   --dump_interval=50 \
                   --timestep=0.25 \
-                  --output_dir=./test_analyze4 \
+                  --output_dir=./test_analyze \
                   --num_segments=1 \
 		          --segment_index=0
                   

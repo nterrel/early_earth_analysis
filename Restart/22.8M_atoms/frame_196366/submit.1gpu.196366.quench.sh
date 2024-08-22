@@ -5,13 +5,13 @@
 #SBATCH --ntasks-per-node=1          # Maximum number of tasks on each node
 #SBATCH --cpus-per-task=1            # Number of cores per MPI task
 #SBATCH --partition=gpu
-#SBATCH --gres=gpu:1
-#SBATCH --mem=256gb                  # Memory (i.e. RAM) per processor
+#SBATCH --gres=gpu:a100:1
+#SBATCH --mem=256gb                  # Memory (i.e. RAM) per node
 #SBATCH --exclude=c0900a-s11
 #SBATCH --mail-type=END,FAIL         # Mail events (NONE, BEGIN, END, FAIL, ALL)
 #SBATCH --mail-user=nterrel@ufl.edu  # Where to send mail
 #SBATCH --time=200:00:00             # Wall time limit (days-hrs:min:sec)
-#SBATCH --output=lammps_ani_22M_quench_16gpu_%j.log   # Path to the standard output and error files relative to the working dir
+#SBATCH --output=lammps_ani_22M_quench_1gpu_%j.log   # Path to the standard output and error files relative to the working dir
 
 echo "Date              = $(date)"
 echo "Hostname          = $(hostname -s)"
@@ -24,14 +24,14 @@ echo "Number of Cores/Task Allocated = $SLURM_CPUS_PER_TASK"
 # #SBATCH --exclude=c0907a-s29
 # #SBATCH --exclude=c1004a-s17,c1000a-s11,c1109a-s11,c1001a-s29
 module load cuda/11.4.3 gcc/9.3.0 openmpi/4.1.5 cmake/3.21.3 git/2.30.1 
-export LAMMPS_ANI_ROOT="/home/jinzexue/program/lammps-ani"
+export LAMMPS_ANI_ROOT="/blue/roitberg/nterrel/lammps-ani"
 # export LAMMPS_ANI_ROOT="/blue/roitberg/apps/lammps-ani"
 export LAMMPS_ROOT=${LAMMPS_ANI_ROOT}/external/lammps/
 export LAMMPS_PLUGIN_PATH=${LAMMPS_ANI_ROOT}/build/
 
 source $(conda info --base)/etc/profile.d/conda.sh
-conda activate /home/jinzexue/program/torch1121 
-# conda activate /blue/roitberg/apps/torch1121
+# conda activate /home/jinzexue/program/torch1121 
+conda activate /blue/roitberg/apps/torch1121
 echo using python: $(which python)
 
 # please check ani_num_models! !!!!

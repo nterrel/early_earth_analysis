@@ -25,9 +25,22 @@
 
 * Changed thermo frequency from 50 to 10 since I'm only running 100 steps
 
+### Errors encountered running quench
+
+* Masses not in .data file created by ase, manually added to\ `/red/roitberg/nick_analysis/Restart/22.8M_atoms/frame_196366/lammps_ani_22M_quench_1gpu_41835062.log`\
+Will need to do this manually for each frame split off, if using ASE to create data file for input. Not sure how well this will work since velocities are assigned by gaussian distribution.
+
+* INT_MAX error (same as encountered in molfind):\
+
+    ```text
+    Exception: nonzero is not supported for tensors with more than INT_MAX elements,   file a support request
+    Exception raised from nonzero_out_cuda at /opt/conda/conda-bld/pytorch_1659484683044/work/aten/src/ATen/native/cuda/Nonzero.cu:115 (most recent call first):
+    ```
+
 ## Molfind stuff
 
 * molfind_41492932 files are before quench, these could not run because of the following error:\
 `RuntimeError: nonzero is not supported for tensors with more than INT_MAX elements,   file a support request`\
 Turns out I was actually using my modified molfind program on the branch `origin/nick`, after switching to `origin/cumolfind_modified` this should work properly.
-* molfind_41682856 files are before quench, with the proper branch.
+* molfind_41682856 files are before quench, with the proper branch. Still hit the following error:\
+`RuntimeError: nonzero is not supported for tensors with more than INT_MAX elements,   file a support request`
