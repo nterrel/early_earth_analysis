@@ -7,6 +7,8 @@ variable       timestamp       index  timestamp
 # configuration
 variable       data_file       index  none
 variable       timestep        index  timestep
+
+# STEPS -- This is something Nick has changed, first tried 100 steps, then 1000, then 5000 since temperature is having trouble equilibrating in a short run.
 variable       run_steps       index  5000
 variable       replicate       index  "1 1 1"
 # ani variables
