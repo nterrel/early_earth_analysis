@@ -7,7 +7,7 @@ variable       timestamp       index  timestamp
 # configuration
 variable       data_file       index  none
 variable       timestep        index  timestep
-variable       run_steps       index  100
+variable       run_steps       index  5000
 variable       replicate       index  "1 1 1"
 # ani variables
 variable       ani_model_file  index  none
@@ -45,20 +45,22 @@ pair_coeff     * *
 thermo_style   custom step pe ke etotal temp press vol density
 thermo         10
 
-# Settings: temperature at 2500 K   -- change to set velocities at 300 K
-velocity       all create 2500.0 12345 rot yes mom yes dist gaussian
+# Settings: set velocities at 300 K
+velocity       all create 300.0 12345 rot yes mom yes dist gaussian
 timestep       ${timestep}
 
 
-# cooled from 2500 K to 300 K immediately
+# cooled to 300 K immediately
 fix            1 all langevin 300.0 300.0 100.0 12345
 fix            2 all nve
 
-# assume timestep is 0.25 fs, and run 100 frames
+# assume timestep is 0.25 fs, and run 100 frames 
+# * changed to 1000 steps on 9/02 @ ~14:30, compare to the 100 step run -- AFTER: temp shot up to ~16000 K, then down to 3800 K after 1000 steps
+# * changed to 5000 steps after ^ since temp still didn't equilibrate to ~300 K 
 dump           2 all dcd 50 ${log_dir}/${timestamp}_196366_quench.dcd
 write_data     ${log_dir}/${timestamp}_196366_quench.final
 write_restart  ${log_dir}/${timestamp}_196366_quench.restart
-run            100
+run            ${run_steps}
 undump         2
 
 # Write final state of simulation
