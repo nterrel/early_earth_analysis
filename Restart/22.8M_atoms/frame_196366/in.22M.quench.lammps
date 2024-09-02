@@ -9,6 +9,7 @@ variable       data_file       index  none
 variable       timestep        index  timestep
 
 # STEPS -- This is something Nick has changed, first tried 100 steps, then 1000, then 5000 since temperature is having trouble equilibrating in a short run.
+# NOTE: MAKE SURE TO CHANGE RUN_STEPS IN SBATCH FILE DEPENDING ON HOW THIS RUNS
 variable       run_steps       index  5000
 variable       replicate       index  "1 1 1"
 # ani variables
@@ -62,7 +63,7 @@ fix            2 all nve
 dump           2 all dcd 50 ${log_dir}/${timestamp}_196366_quench.dcd
 write_data     ${log_dir}/${timestamp}_196366_quench.final
 write_restart  ${log_dir}/${timestamp}_196366_quench.restart
-run            ${run_steps}
+run            5000
 undump         2
 
 # Write final state of simulation
