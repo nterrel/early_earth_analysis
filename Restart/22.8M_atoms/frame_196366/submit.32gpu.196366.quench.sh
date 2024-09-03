@@ -50,7 +50,7 @@ python /red/roitberg/nick_analysis/Restart/22.8M_atoms/frame_196366/run_22.8M_19
     --run_name=early_earth_22M_196366_quench \
     --ani_num_models=8 \
     --timestep=0.25 \
-    --run_steps=10000 \
+    --run_steps=5000 \
     --run
 
 # 228k small system to test
