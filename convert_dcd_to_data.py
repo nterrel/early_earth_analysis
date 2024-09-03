@@ -2,7 +2,7 @@
 
 # CHECK UNITS
 
-# mdtraj uses 
+# mdtraj uses different units than ASE, so be sure that the output xyz (which is the important output from this script -- make the pdb using Richard's tool in lammps_ani) has a cell size of 557x557x557 
 
 import mdtraj as md
 from top_loader import load_topology
