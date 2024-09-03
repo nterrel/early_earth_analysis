@@ -1,6 +1,8 @@
-# Script used to create a .data file for lammps input (for quenching system to run molfind before/after cooling to 300 K)
+# Not a very useful script -- it does produce a pdb but not a usable one for the purpose of restarting a lammps simulation with lammps_ani
 
 # NOTE: This script produces a .pdb file in a format that is not compatible with the lammps_ani scripts `fix_pdb.py` and `pdb2lmp.py`, so instead save coordinates as xyz, use ASE to save pdb, run `fix_pdb.py` and then `pdb2lmp.py`.
+
+# Script used to create a .data file for lammps input (for quenching system to run molfind before/after cooling to 300 K)
 
 import mdtraj as md
 from top_loader import load_topology
