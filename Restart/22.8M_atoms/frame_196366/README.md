@@ -37,6 +37,17 @@ Will need to do this manually for each frame split off, if using ASE to create d
     Exception raised from nonzero_out_cuda at /opt/conda/conda-bld/pytorch_1659484683044/work/aten/src/ATen/native/cuda/Nonzero.cu:115 (most recent call first):
     ```
 
+  * Believe this error is due to GPU memory being full. Do not encounter this issue with 32 A100 GPUs.
+
+* GPU memory error (when running on 1, 2, 4, 8, 16 GPUs, but not with 32):
+
+    ```text
+    RuntimeError: CUDA out of memory. Tried to allocate 6.59 GiB (GPU 1; 79.14 GiB total capacity; 66.32 GiB already allocated; 4.89 GiB free; 71.29 GiB reserved in total by PyTorch) If reserved memory is >> allocated memory try setting max_split_size_mb to avoid fragmentation.  See documentation for Memory Management and PYTORCH_CUDA_ALLOC_CONF
+
+    ```
+
+  * Solved by using the `Roitberg` reservation from 8-31 (06:00:00) to 9-09 (23:59:59). Richard said (if his memory serves) that the max limit of an a100 gpu is ~1m atoms.
+
 ## Molfind stuff
 
 * molfind_41492932 files are before quench, these could not run because of the following error:\
@@ -44,3 +55,5 @@ Will need to do this manually for each frame split off, if using ASE to create d
 Turns out I was actually using my modified molfind program on the branch `origin/nick`, after switching to `origin/cumolfind_modified` this should work properly.
 * molfind_41682856 files are before quench, with the proper branch. Still hit the following error:\
 `RuntimeError: nonzero is not supported for tensors with more than INT_MAX elements,   file a support request`
+
+The above 2 errors are (likely) due to a mismatch in environment -- be sure to use Richard's rapids-23.10 env (a .yml file containing the correct package versions is located at `/red/roitberg/nick_analysis/rapids_23.10.yml`). Do not run into this issue with his version of rapids-23.10, I'm not sure where the issue came from when I tried to install my own version, but I've fixed it by specifying his env.
