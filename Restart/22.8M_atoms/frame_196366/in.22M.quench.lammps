@@ -10,7 +10,7 @@ variable       timestep        index  timestep
 
 # STEPS -- This is something Nick has changed, first tried 100 steps, then 1000, then 5000 since temperature is having trouble equilibrating in a short run.
 # NOTE: MAKE SURE TO CHANGE RUN_STEPS IN SBATCH FILE DEPENDING ON HOW THIS RUNS
-variable       run_steps       index  5000
+variable       run_steps       index  10000
 variable       replicate       index  "1 1 1"
 # ani variables
 variable       ani_model_file  index  none
@@ -60,10 +60,11 @@ fix            2 all nve
 # assume timestep is 0.25 fs, and run 100 frames 
 # * changed to 1000 steps on 9/02 @ ~14:30, compare to the 100 step run -- AFTER: temp shot up to ~16000 K, then down to 3800 K after 1000 steps
 # * changed to 5000 steps after ^ since temp still didn't equilibrate to ~300 K 
+# * changed to 10000 steps after ^ since temp only got down to 459 K after 5k steps
 dump           2 all dcd 50 ${log_dir}/${timestamp}_196366_quench.dcd
 write_data     ${log_dir}/${timestamp}_196366_quench.final
 write_restart  ${log_dir}/${timestamp}_196366_quench.restart
-run            5000
+run            10000
 undump         2
 
 # Write final state of simulation
