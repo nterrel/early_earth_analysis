@@ -1,5 +1,9 @@
 # Script used to create a .data file for lammps input (for quenching system to run molfind before/after cooling to 300 K)
 
+# CHECK UNITS
+
+# mdtraj uses 
+
 import mdtraj as md
 from top_loader import load_topology
 from ase.io import read, write
