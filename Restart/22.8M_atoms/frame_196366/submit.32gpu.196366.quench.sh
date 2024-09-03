@@ -14,7 +14,6 @@
 #SBATCH --mail-user=nterrel@ufl.edu  # Where to send mail
 #SBATCH --time=24:00:00             # Wall time limit (days-hrs:min:sec)
 #SBATCH --output=lammps_ani_22M_quench_32gpu_%j.log   # Path to the standard output and error files relative to the working dir
-#SBATCH --error=lammps_ani_22M_quench_32gpu_%j.err
 
 
 echo "Date              = $(date)"
