@@ -1,7 +1,10 @@
 # Before and after quenching frame 196366 (one of the randomly selected ala-containing frames)
 
+* This was the first frame analyzed, so the most detailed errors / logs / scripts are here -- other frames will contain simplified and streamlined scripts to just run the quench and analysis.
+
 ## in.22M.quench.lammps edits
 
+* Original input can be found at `/red/roitberg/nick_analysis/Restart/22.8M_atoms/in.22M.lammps`. Modified to `example_submit_quench.sh` located in that same directory.
 * Changed 1000 steps to 100 steps
 * Deleted a lot of:
 
@@ -48,6 +51,9 @@ Will need to do this manually for each frame split off, if using ASE to create d
 
   * Solved by using the `Roitberg` reservation from 8-31 (06:00:00) to 9-09 (23:59:59). Richard said (if his memory serves) that the max limit of an a100 gpu is ~1m atoms.
 
+### These errors have been solved, quench runs at approximately 0.55 seconds/step -- after ~7 minutess to load system
+
+
 ## Molfind stuff
 
 * molfind_41492932 files are before quench, these could not run because of the following error:\
@@ -57,3 +63,5 @@ Turns out I was actually using my modified molfind program on the branch `origin
 `RuntimeError: nonzero is not supported for tensors with more than INT_MAX elements,   file a support request`
 
 The above 2 errors are (likely) due to a mismatch in environment -- be sure to use Richard's rapids-23.10 env (a .yml file containing the correct package versions is located at `/red/roitberg/nick_analysis/rapids_23.10.yml`). Do not run into this issue with his version of rapids-23.10, I'm not sure where the issue came from when I tried to install my own version, but I've fixed it by specifying his env.
+
+### Issues with molfind have been solved, the analyses can be found in `original_analyze` and `quench_analyze`.

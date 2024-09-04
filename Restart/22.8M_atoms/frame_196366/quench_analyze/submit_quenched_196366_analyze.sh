@@ -17,19 +17,19 @@ echo "Number of Nodes Allocated      = $SLURM_JOB_NUM_NODES"
 echo "Number of Tasks Allocated      = $SLURM_NTASKS"
 echo "Number of Cores/Task Allocated = $SLURM_CPUS_PER_TASK"
 
-export LAMMPS_ANI_ROOT="/blue/roitberg/apps/lammps-ani"
+export LAMMPS_ANI_ROOT="/blue/roitberg/nterrel/lammps-ani"
 export LAMMPS_ROOT=${LAMMPS_ANI_ROOT}/external/lammps/
 export LAMMPS_PLUGIN_PATH=${LAMMPS_ANI_ROOT}/build/
 
 source $(conda info --base)/etc/profile.d/conda.sh 
-conda activate rapids-23.10
+conda activate /blue/roitberg/jinzexue/program/miniconda3/envs/rapids-23.10/  # Try specifying Richard's env
 echo using python: $(which python)
 
-cumolfind-molfind /red/roitberg/22M_20231222_prodrun/2023-12-27-191205.560554_2.4ns.dcd \
+cumolfind-molfind /red/roitberg/nick_analysis/Restart/22.8M_atoms/frame_196366/logs/2024-09-03-144244.920253_196366_quench.dcd \
                   /red/roitberg/nick_analysis/Restart/22.8M_atoms/mixture_22800000.pdb \
                   /red/roitberg/nick_analysis/all_mol_data.pq \
                   --dump_interval=50 \
                   --timestep=0.25 \
-                  --output_dir=./test_analyze5 \
-                  --num_segments=10 
-
+                  --output_dir=./quench_analyze \
+                  --num_segments=101 \
+                  --segment_index=100
