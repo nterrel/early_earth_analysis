@@ -1,4 +1,4 @@
-# Script used to create a .data file for lammps input (for quenching system to run molfind before/after cooling to 300 K)
+# Script (1/2) used to create a .data file for lammps input (for quenching system to run molfind before/after cooling to 300 K)
 
 # CHECK UNITS
 
@@ -21,7 +21,5 @@ frame = trajectory[frame_index]
 
 frame.save('/red/roitberg/nick_analysis/Restart/22.8M_atoms/frame_196366/frame_196366.xyz')
 
-atoms = read('/red/roitberg/nick_analysis/Restart/22.8M_atoms/frame_196366/frame_196366.xyz')
-atoms.set_cell(cell_lengths_angstroms[0])
-
-write('/red/roitberg/nick_analysis/Restart/22.8M_atoms/frame_196366/frame_196366.data', atoms, format='lammps-data')
+mol = read("frame_196366.xyz")
+write("frame_196366_ase.pdb", mol)
