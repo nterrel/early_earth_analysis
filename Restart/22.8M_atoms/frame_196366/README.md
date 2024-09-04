@@ -4,8 +4,7 @@
 
 ## in.22M.quench.lammps edits
 
-* Original input can be found at `/red/roitberg/nick_analysis/Restart/22.8M_atoms/in.22M.lammps`. Modified to `example_submit_quench.sh` located in that same directory.
-* Changed 1000 steps to 100 steps
+* Original input can be found at `/red/roitberg/nick_analysis/Restart/22.8M_atoms/example_scripts/in.22M.lammps`. Modified to `example_submit_quench.sh` located in that same directory.
 * Deleted a lot of:
 
     ```text

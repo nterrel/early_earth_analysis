@@ -1,4 +1,4 @@
-# NOTE: This script was adapted from the pdb2lmp and pdb_fix scripts in lammps_ani, rewritten to take an input of a single-frame dcd trajectory and output a .data file for use in restarting the simulation from that frame. 
+# NOTE: This script was adapted from the pdb2lmp and pdb_fix scripts in lammps_ani, rewritten to take an input of a single-frame dcd trajectory and output a .data file for use in restarting the simulation from that frame.
 
 import argparse
 import mdtraj as md
@@ -8,6 +8,7 @@ import numpy as np
 import warnings
 import textwrap
 from ase.geometry.analysis import Analysis
+import time
 
 # Template for LAMMPS data file header
 HEADER = """# LAMMPS data
@@ -34,6 +35,7 @@ Masses
 
 """
 
+
 def all_bond_lengths():
     """Function to return all bond lengths"""
     bond_lengths_data = {"HC": 1.09, "HO": 0.96, "HN": 1.01}
@@ -44,20 +46,23 @@ def all_bond_lengths():
         bond_lengths[bond_type_sorted] = bond_lengths_data[bond_type]
     return bond_lengths
 
+
 NUMBERS_TO_SPECIES = {1: 0, 6: 1, 7: 2, 8: 3, 16: 4, 9: 5, 17: 6}
 NUMBERS_TO_LMP_TYPES = {1: 1, 6: 2, 7: 3, 8: 4, 16: 5, 9: 6, 17: 7}
 BOND_LENGTHS = all_bond_lengths()
+
 
 def load_trajectory(dcd_file, topology_file):
     topology = load_topology(topology_file)
     trajectory = md.load(dcd_file, top=topology)
 
-    # Correct teh unit cell dimensions (converting nm to Å)
+    # Correct the unit cell dimensions (converting nm to Å)
     cell_lengths_nm = trajectory.unitcell_lengths
     cell_lengths_angstrom = cell_lengths_nm * 10.0
     trajectory.unitcell_lengths = cell_lengths_angstrom
 
     return trajectory
+
 
 def get_bonds_by_type(atoms, bond_types):
     """Function to get bonds by type"""
@@ -75,18 +80,35 @@ def get_bonds_by_type(atoms, bond_types):
     num_bonds = sum([len(bonds) for bonds in bonds_by_type.values()])
     return bonds_by_type, num_bonds
 
-def save_xyz(frame, output_xyz):
+
+def save_xyz(trajectory, output_xyz):
+    frame_idx = 0
+    frame = trajectory[frame_idx]
     frame.save(output_xyz)
 
-def convert_xyz_to_pdb(input_xyz, output_pdb):
-    mol = read(input_xyz)
-    write(output_pdb, mol)
+
+def convert_xyz_to_pdb(xyz_file, pdb_file, trajectory):
+    """Convert .xyz file to .pdb using ASE and add CRYST1 line."""
+    mol = read(xyz_file)  # ASE reads the .xyz file
+
+    cryst1_line = 'CRYST1  557.000  557.000  557.000  90.00  90.00  90.00 P 1'
+
+    write(pdb_file, mol)
+
+    # Open the PDB file and prepend the CRYST1 line at the beginning
+    with open(pdb_file, 'r+') as f:
+        content = f.read()
+        f.seek(0, 0)
+        # Prepend the CRYST1 line and append the rest
+        f.write(cryst1_line + content)
+
 
 def generate_header(mol, bond_types, bonds_by_type, num_bonds):
     """Function to generate the header for LAMMPS data file"""
     cell = mol.cell
     num_atoms = len(mol)
-    all_bond_types = ",".join(["-".join(bond_type) for bond_type in bond_types])
+    all_bond_types = ",".join(["-".join(bond_type)
+                              for bond_type in bond_types])
     detected_bond_types = ",".join(
         [
             "-".join(bond_type)
@@ -135,7 +157,8 @@ def generate_header(mol, bond_types, bonds_by_type, num_bonds):
         )
 
     # Print cell info
-    print(f"Box information:\nlengths: {cell.lengths()}\nangles: {cell.angles()}")
+    print(
+        f"Box information:\nlengths: {cell.lengths()}\nangles: {cell.angles()}")
     print(
         f"Assume the box is {'not ' if not center else ''}centered in origin, because x_min is {positions_x_min}\n"
     )
@@ -231,6 +254,7 @@ def convert_and_validate_bond_string(input_string):
 
     return result
 
+
 def main():
     parser = argparse.ArgumentParser(
         description=textwrap.dedent(
@@ -246,21 +270,47 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
     parser.add_argument("dcd_file", type=str, help="Input .dcd file")
-    parser.add_argument("topology_file", type=str, help="Topology file for the trajectory")
+    parser.add_argument("topology_file", type=str,
+                        help="Topology file for the trajectory")
     parser.add_argument("xyz_file", type=str, help="Output .xyz file")
     parser.add_argument("pdb_file", type=str, help="Output .pdb file")
     parser.add_argument("data_file", type=str, help="Output LAMMPS .data file")
-    parser.add_argument("--bonds", type=str, default="", help="Bond types for LAMMPS")
+    parser.add_argument("--bonds", type=str, default="",
+                        help="Comma-separated list of bond types for LAMMPS (e.g., 'OH,CH,NH')")
     args = parser.parse_args()
 
+    start_time = time.time()
+
+    print("Loading trajectory...")
+    traj_start = time.time()
     trajectory = load_trajectory(args.dcd_file, args.topology_file)
-    save_xyz(trajectory[0], args.xyz_file)
+    print(f"Trajectory loaded in {time.time() - traj_start:.2f} seconds.")
 
-    convert_xyz_to_pdb(args.xyz_file, args.pdb_file)
+    print("Saving XYZ file...")
+    xyz_start = time.time()
+    save_xyz(trajectory, args.xyz_file)
+    print(f"XYZ file saved in {time.time() - xyz_start:.2f} seconds.")
 
+    print("Converting XYZ to PDB...")
+    pdb_start = time.time()
+    convert_xyz_to_pdb(args.xyz_file, args.pdb_file, trajectory)
+    print(f"PDB file created in {time.time() - pdb_start:.2f} seconds.")
+
+    print("Validating bond types...")
+    bond_start = time.time()
     bond_types = convert_and_validate_bond_string(args.bonds)
+    print(f"Bond types validated in {time.time() - bond_start:.2f} seconds.")
 
+    print("Generating LAMMPS data file...")
+    data_start = time.time()
     generate_data(args.pdb_file, args.data_file, bond_types)
+    print(
+        f"LAMMPS data file generated in {time.time() - data_start:.2f} seconds.")
+
+    # Total time
+    total_time = time.time() - start_time
+    print(f"Total time taken: {total_time:.2f} seconds.")
+
 
 if __name__ == "__main__":
     main()
