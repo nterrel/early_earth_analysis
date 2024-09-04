@@ -248,7 +248,7 @@ def main():
     parser.add_argument("dcd_file", type=str, help="Input .dcd file")
     parser.add_argument("topology_file", type=str, help="Topology file for the trajectory")
     parser.add_argument("xyz_file", type=str, help="Output .xyz file")
-    parser.add_argument("xyz_file", type=str, help="Output .pdb file")
+    parser.add_argument("pdb_file", type=str, help="Output .pdb file")
     parser.add_argument("data_file", type=str, help="Output LAMMPS .data file")
     parser.add_argument("--bonds", type=str, default="", help="Bond types for LAMMPS")
     args = parser.parse_args()
