@@ -21,6 +21,9 @@ directories=(
     "frame_224713",
     "frame_256780",  # NEED TO CREATE FRAME FOR THIS DIR
     "frame_256786",  # NEED TO CREATE FRAME FOR THIS DIR
-    "frame_290169",
-    "frame_344041"   # NEED TO CREATE FRAME FOR THIS DIR
+    "frame_290169"
 )
+
+module load conda
+conda activate /blue/roitberg/apps/torch1121
+
