@@ -9,8 +9,6 @@ import warnings
 import textwrap
 from ase.geometry.analysis import Analysis
 import time
-import glob
-import os
 
 # Template for LAMMPS data file header
 HEADER = """# LAMMPS data
@@ -257,86 +255,62 @@ def convert_and_validate_bond_string(input_string):
 
     return result
 
-def process_frame(dcd_file, xyz_file, pdb_file, data_file, topology, bond_string):
-    print(f"Processing {dcd_file}...")
-    
-    print("Loading trajectory...")
-    traj_start = time.time()
-    trajectory = load_trajectory(dcd_file, topology)
-    print(f"Trajectory loaded in {time.time() - traj_start:.2f} seconds.")
-
-    print("Saving XYZ file...")
-    xyz_start = time.time()
-    save_xyz(trajectory, xyz_file)
-    print(f"XYZ file saved in {time.time() - xyz_start:.2f} seconds.")
-
-    print("Converting XYZ to PDB...")
-    pdb_start = time.time()
-    convert_xyz_to_pdb(xyz_file, pdb_file, trajectory)
-    print(f"PDB file created in {time.time() - pdb_start:.2f} seconds.")
-
-    print("Validating bond types...")
-    bond_start = time.time()
-    bond_types = convert_and_validate_bond_string(bond_string)
-    print(f"Bond types validated in {time.time() - bond_start:.2f} seconds.")
-
-    print("Generating LAMMPS data file...")
-    data_start = time.time()
-    generate_data(pdb_file, data_file, bond_types)
-    print(f"LAMMPS data file generated in {time.time() - data_start:.2f} seconds.")
-
 
 def main():
     parser = argparse.ArgumentParser(
         description=textwrap.dedent(
             """\
-        Convert DCD trajectory files with timestamped names to LAMMPS .data files for multiple frame directories.
-
-        This script reads DCD files, which contain dynamic timestamps in their names (e.g., frame_NUMBER_1.2ns_original.dcd), 
-        converts them to .xyz and .pdb formats, and generates the corresponding LAMMPS .data file for restarting simulations.
-
+        Convert DCD trajectory to LAMMPS .data file
         Example usage:
-        1. Process a single DCD file with timestamp:
-            python dcd2data.py frame_NUMBER_1.2ns_original.dcd traj_top.h5 out.xyz out.pdb out.data
-        2. Process multiple frame directories:
-            python dcd2data.py traj_top.h5 frame_1,frame_2,...  # Pass a comma-separated list of directories.
-
-        Optional: Specify bond types for the LAMMPS .data file generation:
-            python dcd2data.py frame_NUMBER_1.2ns_original.dcd traj_top.h5 out.xyz out.pdb out.data --bonds OH,CH,NH
+        1. only atomic data
+            python dcd2data.py in.dcd out.data
+        2. including bonding data
+            python dcd2data.py in.dcd out.data -- bonds OH,CH,NH
         """
         ),
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
-    parser.add_argument("topology_file", type=str, help="Topology file for the trajectory")
-    parser.add_argument("parent_dir", type=str, help="Comma-separated list of frame directories")
-    parser.add_argument("--bonds", type=str, default="", help="Comma-separated list of bond types for LAMMPS")
+    parser.add_argument("dcd_file", type=str, help="Input .dcd file")
+    parser.add_argument("topology_file", type=str,
+                        help="Topology file for the trajectory")
+    parser.add_argument("xyz_file", type=str, help="Output .xyz file")
+    parser.add_argument("pdb_file", type=str, help="Output .pdb file")
+    parser.add_argument("data_file", type=str, help="Output LAMMPS .data file")
+    parser.add_argument("--bonds", type=str, default="",
+                        help="Comma-separated list of bond types for LAMMPS (e.g., 'OH,CH,NH')")
     args = parser.parse_args()
 
-    print("Loading topology...")
-    topology = load_topology(args.topology_file)
-    print(f"Topology loaded.")
+    start_time = time.time()
 
-    # Find all frame directories
-    for dir in glob.glob(f"{args.parent_dir}/frame_*"):
-        frame_number = os.path.basename(dir).split("_")[1]
-        data_file = f"{dir}/frame_{frame_number}.data"
+    print("Loading trajectory...")
+    traj_start = time.time()
+    trajectory = load_trajectory(args.dcd_file, args.topology_file)
+    print(f"Trajectory loaded in {time.time() - traj_start:.2f} seconds.")
 
-        if os.path.isfile(data_file):
-            print(f"Skipping {dir} as the .data file already exists.")
-            continue
+    print("Saving XYZ file...")
+    xyz_start = time.time()
+    save_xyz(trajectory, args.xyz_file)
+    print(f"XYZ file saved in {time.time() - xyz_start:.2f} seconds.")
 
-        dcd_file = glob.glob(f"{dir}/frame_{frame_number}_*.dcd")
-        if not dcd_file:
-            print(f"DCD file not found in {dir}. Skipping...")
-            continue
+    print("Converting XYZ to PDB...")
+    pdb_start = time.time()
+    convert_xyz_to_pdb(args.xyz_file, args.pdb_file, trajectory)
+    print(f"PDB file created in {time.time() - pdb_start:.2f} seconds.")
 
-        dcd_file = dcd_file[0]
-        xyz_file = f"{dir}/frame_{frame_number}.xyz"
-        pdb_file = f"{dir}/frame_{frame_number}.pdb"
+    print("Validating bond types...")
+    bond_start = time.time()
+    bond_types = convert_and_validate_bond_string(args.bonds)
+    print(f"Bond types validated in {time.time() - bond_start:.2f} seconds.")
 
-        # Process the frame
-        process_frame(dcd_file, xyz_file, pdb_file, data_file, topology, args.bonds)
-        print(f"Finished processing {dir}")
+    print("Generating LAMMPS data file...")
+    data_start = time.time()
+    generate_data(args.pdb_file, args.data_file, bond_types)
+    print(
+        f"LAMMPS data file generated in {time.time() - data_start:.2f} seconds.")
+
+    # Total time
+    total_time = time.time() - start_time
+    print(f"Total time taken: {total_time:.2f} seconds.")
 
 
 if __name__ == "__main__":

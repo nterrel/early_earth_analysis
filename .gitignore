@@ -25,6 +25,8 @@ Restart/22.8M_atoms/frame_196366/logs
 *.err
 *.xyz
 *.conf
+*.final
+*.restart
 *.data
 *.csv
 
