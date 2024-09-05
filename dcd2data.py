@@ -258,32 +258,32 @@ def convert_and_validate_bond_string(input_string):
     return result
 
 def process_frame(dcd_file, xyz_file, pdb_file, data_file, topology, bond_string):
-    print(f"Processing {dcd_file}...")
+    print(f"Processing {dcd_file}...", flush=True)
     
-    print("Loading trajectory...")
+    print("Loading trajectory...", flush=True)
     traj_start = time.time()
     trajectory = load_trajectory(dcd_file, topology)
-    print(f"Trajectory loaded in {time.time() - traj_start:.2f} seconds.")
+    print(f"Trajectory loaded in {time.time() - traj_start:.2f} seconds.", flush=True)
 
-    print("Saving XYZ file...")
+    print("Saving XYZ file...", flush=True)
     xyz_start = time.time()
     save_xyz(trajectory, xyz_file)
-    print(f"XYZ file saved in {time.time() - xyz_start:.2f} seconds.")
+    print(f"XYZ file saved in {time.time() - xyz_start:.2f} seconds.", flush=True)
 
-    print("Converting XYZ to PDB...")
+    print("Converting XYZ to PDB...", flush=True)
     pdb_start = time.time()
     convert_xyz_to_pdb(xyz_file, pdb_file, trajectory)
-    print(f"PDB file created in {time.time() - pdb_start:.2f} seconds.")
+    print(f"PDB file created in {time.time() - pdb_start:.2f} seconds.", flush=True)
 
-    print("Validating bond types...")
+    print("Validating bond types...", flush=True)
     bond_start = time.time()
     bond_types = convert_and_validate_bond_string(bond_string)
-    print(f"Bond types validated in {time.time() - bond_start:.2f} seconds.")
+    print(f"Bond types validated in {time.time() - bond_start:.2f} seconds.", flush=True)
 
-    print("Generating LAMMPS data file...")
+    print("Generating LAMMPS data file...", flush=True)
     data_start = time.time()
     generate_data(pdb_file, data_file, bond_types)
-    print(f"LAMMPS data file generated in {time.time() - data_start:.2f} seconds.")
+    print(f"LAMMPS data file generated in {time.time() - data_start:.2f} seconds.", flush=True)
 
 
 def main():
@@ -312,9 +312,9 @@ def main():
     parser.add_argument("--bonds", type=str, default="", help="Comma-separated list of bond types for LAMMPS")
     args = parser.parse_args()
 
-    print("Loading topology...")
+    print("Loading topology...", flush=True)
     topology = load_topology(args.topology_file)
-    print(f"Topology loaded.")
+    print(f"Topology loaded.", flush=True)
 
     # Find all frame directories
     for dir in glob.glob(f"{args.parent_dir}/frame_*"):
@@ -322,12 +322,12 @@ def main():
         data_file = f"{dir}/frame_{frame_number}.data"
 
         if os.path.isfile(data_file):
-            print(f"Skipping {dir} as the .data file already exists.")
+            print(f"Skipping {dir} as the .data file already exists.", flush=True)
             continue
 
         dcd_file = glob.glob(f"{dir}/frame_{frame_number}_*.dcd")
         if not dcd_file:
-            print(f"DCD file not found in {dir}. Skipping...")
+            print(f"DCD file not found in {dir}. Skipping...", flush=True)
             continue
 
         dcd_file = dcd_file[0]
@@ -336,7 +336,7 @@ def main():
 
         # Process the frame
         process_frame(dcd_file, xyz_file, pdb_file, data_file, topology, args.bonds)
-        print(f"Finished processing {dir}")
+        print(f"Finished processing {dir}", flush=True)
 
 
 if __name__ == "__main__":
