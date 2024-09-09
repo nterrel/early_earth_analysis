@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# This script ensures frames and associated .dcd files have consistent naming conventions
+
 # Define the parent directory where all frame directories are located
 parent_dir="/red/roitberg/nick_analysis/Restart/22.8M_atoms/random_400_frames"
 
