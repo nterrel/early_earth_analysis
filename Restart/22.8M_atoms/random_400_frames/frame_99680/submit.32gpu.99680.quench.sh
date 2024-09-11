@@ -1,19 +1,16 @@
 #!/bin/bash
-#SBATCH --job-name=lammps_ani_99680        # Job name
-#SBATCH --ntasks=32                  # Number of MPI tasks (i.e. processes)
-#SBATCH --nodes=4                    # Maximum number of nodes to be allocated
-#SBATCH --ntasks-per-node=8          # Maximum number of tasks on each node
-#SBATCH --cpus-per-task=1            # Number of cores per MPI task
-#SBATCH --partition=hpg-ai           # Partition   
-#SBATCH --qos=roitberg               # QOS for job
-#SBATCH --account=roitberg           # 
-#SBATCH --reservation=roitberg       # 
-#SBATCH --gres=gpu:a100:8            # GPUs per node
-#SBATCH --mem=120gb                  # Memory (i.e. RAM) per node
-#SBATCH --mail-type=END,FAIL         # Mail events (NONE, BEGIN, END, FAIL, ALL)
-#SBATCH --mail-user=nterrel@ufl.edu  # Where to send mail
-#SBATCH --time=24:00:00              # Wall time limit (days-hrs:min:sec)
-#SBATCH --output=lammps_ani_99680_%j.log   # Path to the standard output and error files relative to the working dir
+#SBATCH --job-name=lammps_ani_99680
+#SBATCH --ntasks=32
+#SBATCH --nodes=4
+#SBATCH --ntasks-per-node=8
+#SBATCH --cpus-per-task=1
+#SBATCH --partition=gpu
+#SBATCH --gres=gpu:a100:8
+#SBATCH --mem=120gb
+#SBATCH --mail-type=END,FAIL
+#SBATCH --mail-user=nterrel@ufl.edu
+#SBATCH --time=02:00:00
+#SBATCH --output=lammps_ani_99680_%j.log
 
 echo "Date              = $(date)"
 echo "Hostname          = $(hostname -s)"
@@ -32,4 +29,15 @@ source $(conda info --base)/etc/profile.d/conda.sh
 conda activate /blue/roitberg/apps/torch1121
 echo using python: $(which python)
 
-python /red/roitberg/nick_analysis/Restart/22.8M_atoms/random_400_frames/run_22.8M_quench.py     /red/roitberg/nick_analysis/Restart/22.8M_atoms/random_400_frames/frame_99680/frame_99680.data     --kokkos     --num_gpus=32     --input_file=/red/roitberg/nick_analysis/Restart/22.8M_atoms/random_400_frames/in.22M.quench.lammps     --log_dir=/red/roitberg/nick_analysis/Restart/22.8M_atoms/random_400_frames/frame_99680/logs     --ani_model_file='ani1x_nr.pt'     --run_name=early_earth_22M_99680_quench     --ani_num_models=8     --timestep=0.25     --run_steps=1000     --run
+python /red/roitberg/nick_analysis/Restart/22.8M_atoms/random_400_frames/run_22.8M_quench.py \
+    /red/roitberg/nick_analysis/Restart/22.8M_atoms/random_400_frames/frame_99680/frame_99680.data \
+    --kokkos \
+    --num_gpus=32 \
+    --input_file=/red/roitberg/nick_analysis/Restart/22.8M_atoms/random_400_frames/in.22M.quench.lammps \
+    --log_dir=/red/roitberg/nick_analysis/Restart/22.8M_atoms/random_400_frames/frame_99680/logs \
+    --ani_model_file='ani1x_nr.pt' \
+    --run_name=early_earth_22M_99680_quench \
+    --ani_num_models=8 \
+    --timestep=0.25 \
+    --run_steps=1000 \
+    --run
