@@ -8,35 +8,41 @@
 
 # Tried editing restart scripts with python but was having trouble with formatting and missing lines, just going to explicitly write the files in the same way as they were originally produced.
 
-script_list="scripts_to_resubmit.txt"
+# File containing the directories
+dir_list="missing_log_dirs.txt"
 
-while IFS= read -r slurm_script; do
-    if [[ -f "$slurm_script" ]]; then
-        echo "Updating script: $slurm_script"
+while IFS= read -r frame_dir; do
+    # Ensure the directory exists
+    if [[ -d "$frame_dir" ]]; then
+        echo "Processing directory: $frame_dir"
 
-        # Extract frame_number and set variables for current file
-        frame_number=$(basename "$slurm_script" | sed 's/.*\.32gpu\.\([0-9]\+\)\.quench\.sh/\1/')
-        frame_dir=$(dirname "$slurm_script")
-        log_dir="${frame_dir}/logs"
-        data_file="${frame_dir}/frame_${frame_number}.data"
-        lammps_input="/red/roitberg/nick_analysis/Restart/22.8M_atoms/random_400_frames/in.22M.quench.lammps"
-        python_script="/red/roitberg/nick_analysis/Restart/22.8M_atoms/random_400_frames/run_22.8M_quench.py"
+        # Find the slurm script in the current directory
+        slurm_script=$(find "$frame_dir" -name "submit.32gpu.*.quench.sh")
 
-        # Create log dir if it doesn't already exist
-        mkdir -p "$log_dir"
+        if [[ -f "$slurm_script" ]]; then
+            echo "Updating script: $slurm_script"
 
-        # Backup the original script as 'ORIGINAL_submit.32gpu.FRAME_NUMBER.quench.sh'
-        backup_script="${frame_dir}/ORIGINAL_submit.32gpu.${frame_number}.quench.sh"
-        if [[ ! -f "$backup_script" ]]; then
-            cp "$slurm_script" "$backup_script"
-            echo "Saved original script as: $backup_script"
-        else
-            echo "Backup script already exists for frame $frame_number, skipping backup."
-        fi
+            # Extract frame_number from the script's filename
+            frame_number=$(basename "$slurm_script" | sed 's/.*\.32gpu\.\([0-9]\+\)\.quench\.sh/\1/')
+            log_dir="${frame_dir}/logs"
+            data_file="${frame_dir}/frame_${frame_number}.data"
+            lammps_input="/red/roitberg/nick_analysis/Restart/22.8M_atoms/random_400_frames/in.22M.quench.lammps"
+            python_script="/red/roitberg/nick_analysis/Restart/22.8M_atoms/random_400_frames/run_22.8M_quench.py"
 
-        # Overwrite the existing SLURM script with the updated configuration
+            # Create log dir if it doesn't already exist
+            mkdir -p "$log_dir"
 
-        cat > "$slurm_script" <<EOL
+            # Backup the original script as 'ORIGINAL_submit.32gpu.FRAME_NUMBER.quench.sh'
+            backup_script="${frame_dir}/ORIGINAL_submit.32gpu.${frame_number}.quench.sh"
+            if [[ ! -f "$backup_script" ]]; then
+                cp "$slurm_script" "$backup_script"
+                echo "Saved original script as: $backup_script"
+            else
+                echo "Backup script already exists for frame $frame_number, skipping backup."
+            fi
+
+            # Overwrite the existing SLURM script with the updated configuration
+            cat > "$slurm_script" <<EOL
 #!/bin/bash
 #SBATCH --job-name=lammps_ani_${frame_number}
 #SBATCH --ntasks=32
@@ -82,10 +88,13 @@ python ${python_script} \\
     --run
 EOL
 
-        echo "Updated submit script: $slurm_script for frame $frame_number"
+            echo "Updated submit script: $slurm_script for frame $frame_number"
+        else
+            echo "Script not found in $frame_dir. Skipping..."
+        fi
     else
-        echo "Script not found: $slurm_script. Skipping..."
+        echo "Directory not found: $frame_dir. Skipping..."
     fi
-done < "$script_list"
+done < "$dir_list"
 
 echo "Script updates complete."
