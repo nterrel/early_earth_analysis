@@ -64,3 +64,5 @@ Turns out I was actually using my modified molfind program on the branch `origin
 The above 2 errors are (likely) due to a mismatch in environment -- be sure to use Richard's rapids-23.10 env (a .yml file containing the correct package versions is located at `/red/roitberg/nick_analysis/rapids_23.10.yml`). Do not run into this issue with his version of rapids-23.10, I'm not sure where the issue came from when I tried to install my own version, but I've fixed it by specifying his env.
 
 ### Issues with molfind have been solved, the analyses can be found in `original_analyze` and `quench_analyze`.
+
+### With Molfind, when comparing to the other restart runs, be sure to use `segment_index=20` for `step=1000`, since all others were ran for just 1000 steps. 
