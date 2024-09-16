@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Path to the directory containing the frame directories
-base_dir="/red/roitberg/nick_analysis/Restart/22.8M_atoms"
+base_dir="/red/roitberg/nick_analysis/Restart/22.8M_atoms/random_400_frames"
 
 # Iterate over each frame directory
 for frame_dir in "$base_dir"/frame_*; do
