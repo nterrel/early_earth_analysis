@@ -74,6 +74,7 @@ The topology of the 22.8M atom simulation is saved from frame 0 of the 0.0ns .dc
 - `Restart`
   - Scripts, simulation files related to restarting the EE simulation runs in order to minimize frames and re-run graph analysis.
   - 228_atoms / 228k_atoms / 22.8M_atoms directories contain files needed for restarting EE sim run for cumolfind analysis of synthesized molecules.
+    - Subdir of 22.8M_atoms is `random_400_frames` where I have split off 400 randomly selected frames for quench restarts. 
 
 - `Scripts`:
   - (WIP) Location for general scripts (after adapting from Ala stuff)
