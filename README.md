@@ -12,28 +12,17 @@ The topology of the 22.8M atom simulation is saved from frame 0 of the 0.0ns .dc
 
 ## Scripts found in this directory NOTE: UPDATE SINCE THESE HAVE BEEN MOVED
 
-- `convert_dcd_to_data.py`
+- `dcd2data.py`
   - Small script to load a .dcd traj file and create a .data file for use in restarting the simulation run from this frame. Note that the velocities are not preserved, since there are not restart checkpoints.
 
-- `extract_trace_frames.py`
-  - This script can extract a specified list of atom indices from a specified number of frames. Left in this directory as `top_loader.py` is a necessary import. Extracts coordinates to the `./Mol_trace/` directory.
-
-- `join_traj_frames.py`
-  - Script to combine single frames into a continuous traj -- created because it is easier to split off one specific frame than it is to split a range of frames. 
-
-- `last_frame.py`
-  - Script to extract the last frame from a trajectory file.
-
-- `split_ala_frames.py`
-  - Isolate (randomly selected) ala-containing frames into individual dcd files.
-
-- `split_traj.py`
-  - Create a small trajectory for testing molfind program on (~20 frames).
+- `submit_dcd2data_dir.sh`
+  - SLURM submission script for the python script which converts a dcd trajectory frame to a .data file for use as a LAMMPS input.
 
 - `top_loader.py`
   - This script is used to load a topology in MDTraj from a single-frame slice of the trajectory (Using the zeroth-frame of the 0.0ns traj file, stored in 'traj_top_0.0ns.h5'). The purpose is to load in a massive (22.8M atom) topology more efficiently than the pdb loader
+  - Extrememly useful, this script should be used any time the topology needs to be loaded. 
 
-## Other files located here
+## Other files located here (not synced through GH since they are too large)
 
 - `22M_topology.pdb`:
   - Original topology Richard used for his simulation
@@ -43,10 +32,20 @@ The topology of the 22.8M atom simulation is saved from frame 0 of the 0.0ns .dc
   - Also contains all possible dimers of the above molecules of interest (357 total molecules)
 
 - `merged_formula.pq`:
-  - A dataframe containing all 'molecules' found in the graph search.\ No atom_indices are included, but frame#, formula are saved here for every graph found at every frame (~570M rows, big dataframe)
+  - A dataframe containing all chemical formulas found in the graph search
+  - No atom_indices are included, but frame number and formula are saved here for every graph found at every frame (~570M rows, big dataframe)
+
+- `merged_mol.pq`:
+  - Dataframe containing all 'molecules' found in the graph search.
+  - This df contains atom_indices that can be used to extract the molecular coordinates of any of these molecules of interest.
+  - This is an outdated parquet, many of the 'found' molecules are not truly that molecule as the graph search was indiscriminant of bonding patterns. New version of molfind has been adapted to correct this, but the entire trajectory has not been re-analyzed, though 415 frames (found in Restart/22.8M_atoms) have been re-analyzed before and after a cooling quench.
+
+- `rapids_23.10.yml`:
+  - Backup of the packages (with correct channel and build) that Richard used to create the original rapids env.
 
 - `traj_top_0.0ns.h5`:
   - The hdf stored topology used with the 'top_loader.py' script
+  - This is the first frame (initial starting configuration) used to keep track of atomic indices throughout the simulation. Works as a topology for any trajectory frame loaded into mdtraj, loads much much faster than in pdb format.
 
 ## Some directories and their contents
 
@@ -63,6 +62,10 @@ The topology of the 22.8M atom simulation is saved from frame 0 of the 0.0ns .dc
 
 - `Mol_trace`:
   - Directory to dump coordinates for the 'trace' alanine formation used to produce that figure Adrian asked for.
+
+- `molfind_modified_timing`:
+  - Directory used for timing comparisons before and after making changes to the cumolfind program.
+  - Only notable change so far that didn't significantly impact the timing was the addition of a more rigorous 
 
 - `Old_outputs`:
   - Not saved to remote repo
