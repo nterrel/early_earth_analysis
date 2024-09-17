@@ -21,3 +21,17 @@
 * Frame 344041
   * Frame containing the most found formulas
 
+## Scripts located here
+
+* `batch_submit_molfind.sh`:
+  * Iterates over directories with the name 'frame_*' and submit both the original and quenched analysis, create subdirectories to place the parquets created, then move on to the next directory. If this works, will run it just like that on the 400 random frames.
+
+* `concatenate_parquets.py`:
+  * Iterate over `frame_*` directories and looks for folders named `original_analyze` or `quench_analyze`, then looks for parquets and concatenates them into a single, unified dataframe.
+  * Drops the 'time' and 'local_frame' columns, shouldn't need since saving correct absolute frame number. 
+
+* `create_analysis_scripts.sh`:
+  * Writes SLURM submission files autonomously for the directories named `frame_NUMBER` which contain a logs directory with a .dcd file.
+
+* `run_22.8M_quench.py`:
+  * LAMMPS runner script -- hasn't been edited really at all, except run_steps.
