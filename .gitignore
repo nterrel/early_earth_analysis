@@ -13,6 +13,7 @@ Restart/228_atoms/logs
 Restart/228k_atoms/logs
 Restart/22.8M_atoms/frame_196366/logs
 *test_analyze*
+*ipynb_checkpoint*
 
 # File extensions to ignore: 
 *.dcd
