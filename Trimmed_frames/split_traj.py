@@ -4,7 +4,7 @@
 # This file contains all Lysine molecules found, so should be a good testing subset.
 
 import mdtraj as md
-from top_loader import load_topology
+from top_loader import load_topology    # Must be imported from the `/red/roitberg/nick_analysis/` directory
 
 input_dcd = "/red/roitberg/22M_20231222_prodrun/2023-12-24-094959.618385_1.2ns.dcd"
 h5_topology = load_topology('traj_top_0.0ns.h5')

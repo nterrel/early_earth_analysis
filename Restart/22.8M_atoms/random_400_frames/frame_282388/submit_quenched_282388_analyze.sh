@@ -22,7 +22,7 @@ export LAMMPS_ROOT=${LAMMPS_ANI_ROOT}/external/lammps/
 export LAMMPS_PLUGIN_PATH=${LAMMPS_ANI_ROOT}/build/
 
 source $(conda info --base)/etc/profile.d/conda.sh
-conda activate /blue/roitberg/jinzexue/program/miniconda3/envs/rapids-23.10/  # Specify Richard's env
+conda activate rapids-23.10  # Specify Richard's env
 echo using python: $(which python)
 
 cumolfind-molfind /red/roitberg/nick_analysis/Restart/22.8M_atoms/random_400_frames/frame_282388/logs/2024-09-12-062421.827628_282388_quench.dcd \
