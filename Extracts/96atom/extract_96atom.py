@@ -31,7 +31,7 @@ def extract_and_assign_coordinates(row, topology):
         return row['coordinates']
     try:
         frame = md.load_frame(dcd_file, index=0, top=topology)
-        atom_indices_flat = np.concatenate(row['atom_indices'])
+        atom_indices_flat = np.concatenate(atom_indices).astype(int)
         coordinates = frame.xyz[0, atom_indices_flat]
 
         return coordinates
