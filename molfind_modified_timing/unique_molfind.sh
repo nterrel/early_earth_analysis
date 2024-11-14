@@ -1,10 +1,10 @@
 #!/bin/bash
-#SBATCH --job-name=2.4ns_molfind_job        # Job name
-#SBATCH --output=2.4ns_molfind_%j.out       # Output file
-#SBATCH --error=2.4ns_molfind_%j.err        # Error file
+#SBATCH --job-name=unique_graphs_molfind_job        # Job name
+#SBATCH --output=unique_graphs_molfind_%j.out       # Output file
+#SBATCH --error=unique_graphs_molfind_%j.err        # Error file
 #SBATCH --partition=gpu               # Partition name
-#SBATCH --mem=256gb                   # Memory per node
-#SBATCH --time=36:00:00               # Time limit
+#SBATCH --mem=64gb                   # Memory per node
+#SBATCH --time=06:00:00               # Time limit
 #SBATCH --gres=gpu:a100:1             # Number of GPUs
 #SBATCH --ntasks=1                    # Number of tasks (processes)
 #SBATCH --cpus-per-task=1             # Number of CPU cores per task (adjust as necessary)
@@ -17,19 +17,18 @@ echo "Number of Nodes Allocated      = $SLURM_JOB_NUM_NODES"
 echo "Number of Tasks Allocated      = $SLURM_NTASKS"
 echo "Number of Cores/Task Allocated = $SLURM_CPUS_PER_TASK"
 
-export LAMMPS_ANI_ROOT="/blue/roitberg/apps/lammps-ani"
+export LAMMPS_ANI_ROOT="/blue/roitberg/nterrel/lammps-ani"
 export LAMMPS_ROOT=${LAMMPS_ANI_ROOT}/external/lammps/
 export LAMMPS_PLUGIN_PATH=${LAMMPS_ANI_ROOT}/build/
 
 source $(conda info --base)/etc/profile.d/conda.sh 
-conda activate /blue/roitberg/jinzexue/program/miniconda3/envs/rapids-23.10
+conda activate rapids-23.10
 echo using python: $(which python)
 
-cumolfind-molfind /red/roitberg/22M_20231222_prodrun/2023-12-27-191205.560554_2.4ns.dcd \
+cumolfind-molfind /red/roitberg/nick_analysis/Trimmed_frames/trimmed_1608-1629_1.2ns.dcd \
                   /red/roitberg/nick_analysis/Restart/22.8M_atoms/mixture_22800000.pdb \
                   /red/roitberg/nick_analysis/all_mol_data.pq \
                   --dump_interval=50 \
                   --timestep=0.25 \
-                  --output_dir=./test_analyze5 \
-                  --num_segments=10 
+                  --output_dir=./resources_test_dir
 

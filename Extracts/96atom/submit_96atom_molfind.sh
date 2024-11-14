@@ -3,8 +3,8 @@
 #SBATCH --output=molfind_%j.out       # Output file
 #SBATCH --error=molfind_%j.err        # Error file
 #SBATCH --partition=gpu               # Partition name
-#SBATCH --mem=256gb                   # Memory per node
-#SBATCH --time=36:00:00               # Time limit
+#SBATCH --mem=64gb                   # Memory per node
+#SBATCH --time=04:00:00               # Time limit
 #SBATCH --gres=gpu:a100:1             # Number of GPUs
 #SBATCH --ntasks=1                    # Number of tasks (processes)
 #SBATCH --cpus-per-task=1             # Number of CPU cores per task (adjust as necessary)
