@@ -11,7 +11,8 @@ Old_outputs
 Restart/228_atoms/idk
 Restart/228_atoms/logs
 Restart/228k_atoms/logs
-Restart/22.8M_atoms/frame_196366/logs
+Restart/22.8M_atoms/frame_*
+Restart/22.8M_atoms/random_400_frames/frame_*
 *test_analyze*
 *ipynb_checkpoint*
 
