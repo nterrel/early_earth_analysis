@@ -22,12 +22,13 @@ export LAMMPS_ROOT=${LAMMPS_ANI_ROOT}/external/lammps/
 export LAMMPS_PLUGIN_PATH=${LAMMPS_ANI_ROOT}/build/
 
 source $(conda info --base)/etc/profile.d/conda.sh
-conda activate rapids-23.10  # Specify Richard's env
+conda activate rapids-23.10
 echo using python: $(which python)
 
 cumolfind-molfind /red/roitberg/22M_20231222_prodrun/2023-12-28-073439.757187_3.8ns.dcd \
                   /red/roitberg/nick_analysis/Restart/22.8M_atoms/mixture_22800000.pdb \
                   /red/roitberg/nick_analysis/all_mol_data.pq \
+                  --time_offset=3.8 \
                   --dump_interval=50 \
                   --timestep=0.25 \
                   --output_dir=/red/roitberg/nick_analysis/restart_analyze \

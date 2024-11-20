@@ -28,6 +28,7 @@ echo using python: $(which python)
 cumolfind-molfind /red/roitberg/22M_20231222_prodrun/2023-12-28-073439.757187_2.9ns.dcd \
                   /red/roitberg/nick_analysis/Restart/22.8M_atoms/mixture_22800000.pdb \
                   /red/roitberg/nick_analysis/all_mol_data.pq \
+                  --time_offset=2.9 \
                   --dump_interval=50 \
                   --timestep=0.25 \
                   --output_dir=/red/roitberg/nick_analysis/restart_analyze \
