@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --job-name=merge_formula
 #SBATCH --ntasks=1
-#SBATCH --mem=510gb
+#SBATCH --mem=512gb
 #SBATCH --time=08:00:00
 #SBATCH --output=merge_pq_%j.out
 #SBATCH --error=merge_pq_%j.err
