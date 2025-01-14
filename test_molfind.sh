@@ -26,7 +26,7 @@ conda activate rapids-23.10
 echo using python: $(which python)
 
 cumolfind-molfind /red/roitberg/nick_analysis/Trimmed_frames/trimmed_1608-1629_1.2ns.dcd \
-                  /red/roitberg/nick_analysis/Restart/22.8M_atoms/mixture_22800000.pdb \
+                  /red/roitberg/nick_analysis/traj_top_0.0ns.h5 \
                   /red/roitberg/nick_analysis/all_mol_data.pq \
                   --dump_interval=50 \
                   --timestep=0.25 \
