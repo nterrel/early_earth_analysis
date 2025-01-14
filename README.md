@@ -15,12 +15,18 @@ The topology of the 22.8M atom simulation is saved from frame 0 of the 0.0ns .dc
 - `dcd2data.py`
   - Small script to load a .dcd traj file and create a .data file for use in restarting the simulation run from this frame. Note that the velocities are not preserved, since there are not restart checkpoints.
 
+- `generate_xyz.py`
+  - Python script to take an HDF5 coordinate file and generate xyz file(s) from those coordinates. Note that the coordinates must be updated from nanometers to angstrom, and that it relies on the `top_loader.py` script described below.
+
 - `submit_dcd2data_dir.sh`
   - SLURM submission script for the python script which converts a dcd trajectory frame to a .data file for use as a LAMMPS input.
 
+- `test_molfind.sh`
+  - SLURM submission script for testing the molfind program housed within LAMMPS-ANI. For usage, be sure to be on the correct branch of LAMMPS-ANI; this script looks at `/blue/roitberg/nterrel/lammps-ani`. The "canonical" molfind program is in the master branch, but the version with updated graph matching, unique graph identification, and trace functionalities are located in other branches described by READMEs in that software package repo.
+
 - `top_loader.py`
   - This script is used to load a topology in MDTraj from a single-frame slice of the trajectory (Using the zeroth-frame of the 0.0ns traj file, stored in 'traj_top_0.0ns.h5'). The purpose is to load in a massive (22.8M atom) topology more efficiently than the pdb loader
-  - Extrememly useful, this script should be used any time the topology needs to be loaded. 
+  - Extrememly useful, this script should be used any time the topology needs to be loaded.
 
 ## Other files located here (not synced through GH since they are too large)
 
