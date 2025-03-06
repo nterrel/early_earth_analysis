@@ -2,12 +2,14 @@
 #SBATCH --job-name=molfind_modified_test      # Job name
 #SBATCH --output=molfind_modified_test_%j.out          # Output file
 #SBATCH --error=molfind_modified_test_%j.err           # Error file
-#SBATCH --gpus=a100
+#SBATCH --partition=gpu
+#SBATCH --gres=gpu:a100:1
 #SBATCH --mem=64gb                   		    # Memory per node
 #SBATCH --time=06:00:00               		    # Time limit
 #SBATCH --ntasks=1                    		    # Number of tasks (processes)
 #SBATCH --cpus-per-task=1             		    # Number of CPU cores per task (adjust as necessary)
 #SBATCH --account=mingjieliu-faimm
+#SBATCH --qos=mingjieliu-faimm
 
 
 echo "Date              = $(date)"

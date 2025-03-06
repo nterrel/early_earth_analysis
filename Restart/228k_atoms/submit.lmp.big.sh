@@ -5,8 +5,8 @@
 #SBATCH --ntasks-per-node=4          # Maximum number of tasks on each node
 #SBATCH --cpus-per-task=1            # Number of cores per MPI task
 #SBATCH --partition=gpu
-#SBATCH --qos=roitberg
-#SBATCH --account=roitberg
+#SBATCH --qos=mingjieliu-faimm
+#SBATCH --account=mingjieliu-faimm
 #SBATCH --gres=gpu:a100:4
 #SBATCH --mem=128gb                  # Memory (i.e. RAM) per processor
 #SBATCH --mail-type=END,FAIL         # Mail events (NONE, BEGIN, END, FAIL, ALL)

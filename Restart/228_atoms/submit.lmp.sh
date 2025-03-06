@@ -5,11 +5,11 @@
 #SBATCH --ntasks-per-node=2            # Maximum number of tasks on each node
 #SBATCH --cpus-per-task=1              # Number of cores per MPI task
 #SBATCH --partition=gpu	 # This doesn't work -- hpg-ai submits to the queue but just sits there? 
-#SBATCH --qos=roitberg
-#SBATCH --account=roitberg
-#SBATCH --gres=gpu:a100:2
+#SBATCH --qos=mingjieliu-faimm
+#SBATCH --account=mingjieliu-faimm
+#SBATCH --gres=gpu:a100:1
 #SBATCH --mem-per-cpu=16gb             # Memory (i.e. RAM) per processor
-#SBATCH --time=8:00:00                 # Wall time limit (days-hrs:min:sec)
+#SBATCH --time=36:00:00                 # Wall time limit (days-hrs:min:sec)
 #SBATCH --output=lammps_ani_%j_1.log   # Path to the standard output and error files relative to the working dir
 
 echo "Date              = $(date)"
@@ -29,4 +29,4 @@ source $(conda info --base)/etc/profile.d/conda.sh
 conda activate /blue/roitberg/apps/torch1121
 echo using python: $(which python)
 
-python run_228.py mixture_228.data --kokkos --num_gpus=2 --input_file=in.lammps --log_dir=logs --ani_model_file='ani1x_nr.pt' --run_name=scale_early_earth_ani1x_nr --ani_num_models=-1 --timestep=0.25 --run
+python run_228.py mixture_228.data --kokkos --num_gpus=1 --input_file=in.lammps --log_dir=logs --ani_model_file='ani1x_nr.pt' --run_name=scale_early_earth_ani1x_nr --ani_num_models=-1 --timestep=0.25 --run

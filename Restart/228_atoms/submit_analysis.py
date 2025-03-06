@@ -9,7 +9,7 @@ def submit_job(traj_file, top_file, mol_pq, time_offset, num_segments, segment_i
     job_name = f"cumolfind_{os.path.splitext(os.path.basename(traj_file))[0]}_segment_{segment_index:0{len(str(num_segments))}d}_of_{num_segments}"
     output_filename = f"logs/{job_name}_%j.log"
     os.makedirs(os.path.dirname(output_filename), exist_ok=True)
-    num_gpus = 4
+    num_gpus = 1
     nodes = 1
     ntasks_per_node = num_gpus
     gres = f"gpu:a100:{1}"
@@ -21,8 +21,8 @@ def submit_job(traj_file, top_file, mol_pq, time_offset, num_segments, segment_i
         cpus_per_task=1,
         partition="gpu",
         #reservation="roitberg-phase2",
-        qos="roitberg",
-        account="roitberg",
+        qos="mingjieliu-faimm",
+        account="mingjieliu-faimm",
         gres=gres,
         mem_per_cpu="128gb",
         time="20:00:00",
@@ -41,7 +41,7 @@ def submit_job(traj_file, top_file, mol_pq, time_offset, num_segments, segment_i
         'echo "Number of Cores/Task Allocated = $SLURM_CPUS_PER_TASK"',
         # module load and setup environment variables
         "module load cuda/11.4.3 gcc/9.3.0 openmpi/4.1.5 cmake/3.21.3 git/2.30.1",
-        'export LAMMPS_ANI_ROOT="/blue/roitberg/apps/lammps-ani"',
+        'export LAMMPS_ANI_ROOT="/blue/roitberg/nterrel/lammps-ani"',
         "export LAMMPS_ROOT=${LAMMPS_ANI_ROOT}/external/lammps/",
         "export LAMMPS_PLUGIN_PATH=${LAMMPS_ANI_ROOT}/build/",
         # setup conda in the subshell and activate the environment
@@ -69,13 +69,13 @@ def main():
     parser.add_argument("--traj", type=str, required=True,
                         help="Directory containing trajectory files or a single trajectory file.")
     parser.add_argument("--top", type=str, required=True,
-                        help="Topology file.")
+                        help="HDF5 topology file.")
     parser.add_argument("--num_segments", type=int, required=True,
                         help="Number of segments for each trajectory.")
     parser.add_argument("--mol_pq", type=str, required=True,
                         help="Molecule database file")
     parser.add_argument("--output_dir", type=str,
-                        help="Output directory", default="test_analyze")
+                        help="Output directory", default="test_analyze_new")
     parser.add_argument('-y', action='store_true',
                         help='If provided, the job will be submitted. If not, the job will only be prepared but not submitted.')
     args = parser.parse_args()
