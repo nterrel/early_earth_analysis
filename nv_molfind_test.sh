@@ -1,19 +1,18 @@
 #!/bin/bash
-#SBATCH --job-name=new_molfind_list      # Job name
-#SBATCH --output=new_molfind_list_%j.out          # Output file
-#SBATCH --error=new_molfind_list_%j.err           # Error file
+#SBATCH --job-name=melisa_molfind_test               # Job name
+#SBATCH --output=nv_molfind_test_%j.out          # Output file
+#SBATCH --error=nv_molfind_test_%j.err           # Error file
 #SBATCH --partition=gpu
-#SBATCH --gres=gpu:a100:2
-#SBATCH --mem=64gb                   		    # Memory per node
-#SBATCH --time=02:00:00               		    # Time limit
-#SBATCH --ntasks=2                    		    # Number of tasks (processes)
-#SBATCH --cpus-per-task=1             		    # Number of CPU cores per task (adjust as necessary)
-#SBATCH --account=mingjieliu-faimm
-#SBATCH --qos=mingjieliu-faimm
+#SBATCH --gres=gpu:a100:1                            # Try to use A100s, large-scale molfind is untested on others
+#SBATCH --mem=64gb                   		         # Memory per node
+#SBATCH --time=00:60:00               		         # Time limit
+#SBATCH --ntasks=1                    		         # Number of tasks (processes)
+#SBATCH --cpus-per-task=1             		         # Number of CPU cores per task (adjust as necessary)
+#SBATCH --account=mingjieliu-faimm                   # New allocation account
+#SBATCH --qos=mingjieliu-faimm                       # Must specify same qos as above, or it will default to roitberg qos
 
 start_time=$(date +%s)
 
-echo "This is testing cumolfind_unique_graphs branch of lammps-ani." 
 echo "Date              = $(date)"
 echo "Hostname          = $(hostname -s)"
 echo "Working Directory = $(pwd)"
@@ -32,11 +31,11 @@ echo using python: $(which python)
 
 cumolfind-molfind /red/roitberg/nick_analysis/Trimmed_frames/trimmed_1608-1629_1.2ns.dcd \
                   /red/roitberg/nick_analysis/traj_top_0.0ns.h5 \
-                  /red/roitberg/nick_analysis/reduced_all_mol.pq \
+                  /red/roitberg/nick_analysis/all_mol_data.pq \
+		  --task="analyze_trajectory" \
                   --dump_interval=50 \
                   --timestep=0.25 \
-                  --output_dir=/red/roitberg/nick_analysis/new_mol_list
-		  --num_segments=3
+                  --output_dir=/blue/roitberg/nterrel/melisa_molfind_test \
 
 end_time=$(date +%s)
 

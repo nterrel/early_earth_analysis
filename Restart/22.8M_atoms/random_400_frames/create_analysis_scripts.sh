@@ -15,20 +15,22 @@ for frame_dir in "$base_dir"/frame_*; do
     quench_dcd=$(find "$frame_dir/logs" -maxdepth 1 -name "*quench.dcd")
 
     # Output directories
-    original_output_dir="${frame_dir}/original_analyze"
-    quench_output_dir="${frame_dir}/quench_analyze"
+    original_output_dir="${frame_dir}/new_original_analyze"
+    quench_output_dir="${frame_dir}/new_quench_analyze"
 
     # Check if both files are found before creating scripts
     if [[ -n "$original_dcd" && -n "$quench_dcd" ]]; then
         # Create script for the original DCD analysis
-        original_script="${frame_dir}/submit_original_${frame_num}_analyze.sh"
+        original_script="${frame_dir}/new_submit_original_${frame_num}_analyze.sh"
         cat <<EOL > $original_script
 #!/bin/bash
 #SBATCH --job-name=molfind_${frame_num}_original            # Job name
 #SBATCH --output=${frame_dir}/molfind_${frame_num}_original_%j.out       # Output file
 #SBATCH --error=${frame_dir}/molfind_${frame_num}_original_%j.err        # Error file
-#SBATCH --partition=gpu                                     # Partition name
-#SBATCH --mem=128gb                                         # Memory per node
+#SBATCH --account=mingjieliu-faimm
+#SBATCH --qos=mingjieliu-faimm
+#SBATCH --partition=gpu                                  # Partition name
+#SBATCH --mem=96gb                                          # Memory per node
 #SBATCH --time=02:00:00                                     # Time limit
 #SBATCH --gres=gpu:a100:1                                   # Number of GPUs
 #SBATCH --ntasks=1                                          # Number of tasks (processes)
@@ -47,12 +49,12 @@ export LAMMPS_ROOT=\${LAMMPS_ANI_ROOT}/external/lammps/
 export LAMMPS_PLUGIN_PATH=\${LAMMPS_ANI_ROOT}/build/
 
 source \$(conda info --base)/etc/profile.d/conda.sh
-conda activate /blue/roitberg/jinzexue/program/miniconda3/envs/rapids-23.10/  # Specify Richard's env
+conda activate rapids-23.10  # Specify Richard's env
 echo using python: \$(which python)
 
 cumolfind-molfind ${original_dcd} \\
-                  /red/roitberg/nick_analysis/Restart/22.8M_atoms/mixture_22800000.pdb \\
-                  /red/roitberg/nick_analysis/all_mol_data.pq \\
+                  /red/roitberg/nick_analysis/traj_top_0.0ns.h5 \\
+                  /red/roitberg/nick_analysis/reduced_all_mol.pq \\
                   --dump_interval=50 \\
                   --timestep=0.25 \\
                   --output_dir=${original_output_dir} \\
@@ -61,14 +63,16 @@ cumolfind-molfind ${original_dcd} \\
 EOL
 
         # Create script for the quenched DCD analysis
-        quench_script="${frame_dir}/submit_quenched_${frame_num}_analyze.sh"
+        quench_script="${frame_dir}/new_submit_quenched_${frame_num}_analyze.sh"
         cat <<EOL > $quench_script
 #!/bin/bash
 #SBATCH --job-name=molfind_${frame_num}_quenched                 # Job name
 #SBATCH --output=${frame_dir}/molfind_${frame_num}_quenched_%j.out            # Output file
 #SBATCH --error=${frame_dir}/molfind_${frame_num}_quenched_%j.err             # Error file
-#SBATCH --partition=gpu                                          # Partition name
-#SBATCH --mem=128gb                                              # Memory per node
+#SBATCH --account=mingjieliu-faimm
+#SBATCH --qos=mingjieliu-faimm
+#SBATCH --partition=gpu                                  # Partition name
+#SBATCH --mem=96gb                                               # Memory per node
 #SBATCH --time=02:00:00                                          # Time limit
 #SBATCH --gres=gpu:a100:1                                        # Number of GPUs
 #SBATCH --ntasks=1                                               # Number of tasks (processes)
@@ -87,12 +91,12 @@ export LAMMPS_ROOT=\${LAMMPS_ANI_ROOT}/external/lammps/
 export LAMMPS_PLUGIN_PATH=\${LAMMPS_ANI_ROOT}/build/
 
 source \$(conda info --base)/etc/profile.d/conda.sh
-conda activate /blue/roitberg/jinzexue/program/miniconda3/envs/rapids-23.10/  # Specify Richard's env
+conda activate rapids-23.10  
 echo using python: \$(which python)
 
 cumolfind-molfind ${quench_dcd} \\
-                  /red/roitberg/nick_analysis/Restart/22.8M_atoms/mixture_22800000.pdb \\
-                  /red/roitberg/nick_analysis/all_mol_data.pq \\
+                  /red/roitberg/nick_analysis/traj_top_0.0ns.h5 \\
+                  /red/roitberg/nick_analysis/reduced_all_mol.pq \\
                   --dump_interval=50 \\
                   --timestep=0.25 \\
                   --output_dir=${quench_output_dir} \\

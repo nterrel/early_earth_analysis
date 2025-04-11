@@ -10,8 +10,8 @@ for frame_dir in "$base_dir"/frame_*; do
     frame_num=$(basename "$frame_dir" | cut -d'_' -f2)
 
     # Paths to submission scripts
-    original_script="${frame_dir}/submit_original_${frame_num}_analyze.sh"
-    quench_script="${frame_dir}/submit_quenched_${frame_num}_analyze.sh"
+    original_script="${frame_dir}/new_submit_original_${frame_num}_analyze.sh"
+    quench_script="${frame_dir}/new_submit_quenched_${frame_num}_analyze.sh"
 
     # Check if original script exists before submitting
     if [[ -f "$original_script" ]]; then

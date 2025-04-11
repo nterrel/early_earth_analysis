@@ -28,11 +28,9 @@ echo using python: $(which python)
 # Run the cumolfind-molfind command (NOTE: this is on 'sliced_trajectory.dcd' which is frames 101000-102000 of the 228k traj)
 cumolfind-molfind /red/roitberg/nick_analysis/Restart/228k_atoms/sliced_trajectory.dcd \
                   /red/roitberg/nick_analysis/Restart/228k_atoms/mixture_228000.pdb \
-                  /red/roitberg/nick_analysis/all_mol_data.pq \
+                  /red/roitberg/nick_analysis/reduced_all_mol.pq \
                   --dump_interval=50 \
                   --timestep=0.25 \
-                  --output_dir=./test_analyze1 \
-                  --num_segments=1 \
-		          --segment_index=0
+                  --output_dir=./new_test_analyze
                   
 

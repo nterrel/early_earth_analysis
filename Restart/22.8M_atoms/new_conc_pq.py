@@ -4,7 +4,7 @@ import pandas as pd
 import glob
 
 # Define paths and output files
-base_dir = "/red/roitberg/nick_analysis/Restart/22.8M_atoms/random_400_frames"
+base_dir = "/red/roitberg/nick_analysis/Restart/22.8M_atoms"
 original_formula_output = 'combined_original_formula.pq'
 original_molecule_output = 'combined_original_molecule.pq'
 quenched_formula_output = 'combined_quenched_formula.pq'

@@ -5,12 +5,13 @@
 #SBATCH --partition=gpu               # Partition name
 #SBATCH --mem=64gb                    # Memory per node
 #SBATCH --time=72:00:00               # Time limit
-#SBATCH --gres=gpu:a100:1             # Number of GPUs
-#SBATCH --ntasks=1                    # Number of tasks (processes)
+#SBATCH --gres=gpu:a100:8             # Number of GPUs
+#SBATCH --ntasks=8                    # Number of tasks (processes)
 #SBATCH --cpus-per-task=1             # Number of CPU cores per task (adjust as necessary)
 
-#SBATCH --account=mingjieliu-faimm
-#SBATCH --qos=mingjieliu-faimm
+#SBATCH --reservation=roitberg
+#SBATCH --account=roitberg
+#SBATCH --qos=roitberg
 
 echo "Date              = $(date)"
 echo "Hostname          = $(hostname -s)"
@@ -34,5 +35,6 @@ cumolfind-molfind /red/roitberg/nick_analysis/Restart/228_atoms/logs/2025-02-13-
                   /red/roitberg/nick_analysis/all_mol_data.pq \
                   --dump_interval=50 \
                   --timestep=0.25 \
-                  --output_dir=./test_analyze_new 
+                  --output_dir=./test_analyze_new \
+		  --num_segments=8 
 
