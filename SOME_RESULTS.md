@@ -1,5 +1,7 @@
 # Keeping track of small outputs here
 
+This is pretty outdated, the ~1.5% of alanines unable to be labeled are due to molecules along the periodic boundary. 
+
 ## Things to do
 
 - After extracting all coordinates, assemble them into a single hdf that is organized like the ANI energies, maybe compute the DFT energies of those things(?) and compare to the ANI energies of those molecules.
@@ -10,7 +12,7 @@
 Assigning stereochemistry with RDKit:
     (ani) nickterrel WIP % python assign_stereochemistry.py
 
-Total runtime for all stereo_analyses (438,773 alanines): 147.1323938369751 seconds.
+Total runtime for all `stereo_analyses` (438,773 alanines): 147.1323938369751 seconds.
 
     (ani) nickterrel WIP % grep "Unassigned-" stereo_labeled_alanines.sdf -c
 
