@@ -22,25 +22,25 @@ echo "Number of Nodes Allocated      = $SLURM_JOB_NUM_NODES"
 echo "Number of Tasks Allocated      = $SLURM_NTASKS"
 echo "Number of Cores/Task Allocated = $SLURM_CPUS_PER_TASK"
 
-export LAMMPS_ANI_ROOT="/blue/roitberg/nterrel/lammps-ani"
+export LAMMPS_ANI_ROOT="/red/roitberg/lammps-ani"
 export LAMMPS_ROOT=${LAMMPS_ANI_ROOT}/external/lammps/
 export LAMMPS_PLUGIN_PATH=${LAMMPS_ANI_ROOT}/build/
 
 module load gcc/9.3.0 openmpi/4.1 cmake/3.21.3 git/2.30.1 singularity
 
 source $(conda info --base)/etc/profile.d/conda.sh 
-conda activate rapids-23.10
+conda activate /red/roitberg/conda-envs/envs/rapids-23.10
 echo using python: $(which python)
 
-cumolfind-molfind /blue/roitberg/nterrel/trimmed_2.4ns_stride100.dcd \
-                  /blue/roitberg/nterrel/traj_top_0.0ns.h5 \
-                  /blue/roitberg/nterrel/reduced_all_mol.pq \
+cumolfind-molfind /red/roitberg/22M_20231222_prodrun/2023-12-27-191205.560554_2.4ns.dcd \
+                  /red/roitberg/nick_analysis/traj_top_0.0ns.h5 \
+                  /red/roitberg/nick_analysis/reduced_all_mol.pq \
                   --task="track_molecules" \
 		  --dump_interval=50 \
                   --timestep=0.25 \
-                  --output_dir=/blue/roitberg/nterrel/ala_track_2.4ns \
-		  --frame_stride=1 \
-		  --frame_to_track_mol_origin="/blue/roitberg/nterrel/single_ala_2.4ns.pq"
+                  --output_dir=/red/roitberg/nick_analysis/ala_track_2.4ns_COMBINED_TEST \
+		  --frame_stride=100 \
+		  --frame_to_track_mol_origin="/red/roitberg/nick_analysis/single_ala_2.4ns.pq"
 
 end_time=$(date +%s)
 
