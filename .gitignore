@@ -2,6 +2,7 @@
 __pycache__
 _broken
 _testing
+unique_fragment_analysis/slurm_scripts
 
 Extracts/Alanine/HDF_coord
 HDF_coord
