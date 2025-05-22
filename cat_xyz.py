@@ -25,7 +25,7 @@ def parse_xyz_new_format(filename):
 
 
 # Path setup
-input_dir = Path('ala_track_2.4ns')
+input_dir = Path('ala_track_2.4ns_TEST')
 output_dir = input_dir / "combined_xyzs"
 output_dir.mkdir(exist_ok=True)
 
