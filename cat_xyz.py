@@ -26,7 +26,7 @@ def parse_xyz_new_format(filename):
 
 # Path setup
 input_dir = Path('ala_track_2.4ns_TEST')
-output_dir = input_dir / "combined_xyzs"
+output_dir = input_dir / "ordered_combined_xyzs"
 output_dir.mkdir(exist_ok=True)
 
 xyz_files = glob.glob(str(input_dir / "*_frame_*.xyz"))
@@ -58,11 +58,8 @@ for frame_id, files in frame_groups.items():
         flat_data.extend(fragment_data)
 
     # Sort by index where available, otherwise keep original order
-    #flat_data_sorted = sorted(flat_data, key=lambda x: (x[0] is None, x[0] if x[0] is not None else 0))
-
-    # above line is commented out to preserve the original order (corresponding to listed fragments in order)
-    # rather than listing the tracked indices first
-    flat_data_sorted = flat_data
+    flat_data_sorted = sorted(flat_data, key=lambda x: (x[0] is None, x[0] if x[0] is not None else 0))
+    # above line is to list the tracked indices first
 
     output_file = output_dir / f"frame_{frame_id}_combined.xyz"
     with open(output_file, "w") as out:
