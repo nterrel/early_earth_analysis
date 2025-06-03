@@ -33,14 +33,14 @@ source $(conda info --base)/etc/profile.d/conda.sh
 conda activate /red/roitberg/conda-envs/envs/rapids-23.10
 echo using python: $(which python)
 
-cumolfind-molfind /red/roitberg/22M_20231222_prodrun/2023-12-23-005238.631380_0.1ns.dcd \
+cumolfind-molfind /red/roitberg/nick_analysis/trimmed_ala_stride50.dcd \
                   /red/roitberg/nick_analysis/traj_top_0.0ns.h5 \
                   /red/roitberg/nick_analysis/reduced_all_mol.pq \
                   --task="track_molecules" \
 		          --dump_interval=50 \
                   --timestep=0.25 \
-                  --output_dir=/red/roitberg/nick_analysis/ala_track_FIRST/ \
-		          --frame_stride=50 \
+                  --output_dir=/red/roitberg/nick_analysis/ala_track_FIRST-padded/ \
+		          --frame_stride=1 \
 		          --frame_to_track_mol_origin="/red/roitberg/nick_analysis/first_ala.pq"
 
 end_time=$(date +%s)

@@ -1,7 +1,7 @@
 #!/bin/bash
-#SBATCH --job-name=trackmol_2.4ns      # Job name
-#SBATCH --output=trackmol_2.4ns_%j.out          # Output file
-#SBATCH --error=trackmol_2.4ns_%j.err           # Error file
+#SBATCH --job-name=trackmol_ala_cat_pad      # Job name
+#SBATCH --output=trackmol_%j.out          # Output file
+#SBATCH --error=trackmol_%j.err           # Error file
 #SBATCH --partition=gpu
 #SBATCH --gres=gpu:a100:1
 #SBATCH --mem=64gb                   		    # Memory per node
@@ -14,7 +14,7 @@
 
 start_time=$(date +%s)
 
-echo "This job tracks the first Gly formation over the 0.1ns traj split, with a 50 frame stride (skip 50 frames)." 
+echo "This job tracks the first Ala formation over the 0.1ns traj split, with a 50 frame stride (skip 50 frames)." 
 echo "Date              = $(date)"
 echo "Hostname          = $(hostname -s)"
 echo "Working Directory = $(pwd)"
@@ -33,15 +33,15 @@ source $(conda info --base)/etc/profile.d/conda.sh
 conda activate /red/roitberg/conda-envs/envs/rapids-23.10
 echo using python: $(which python)
 
-cumolfind-molfind /red/roitberg/nick_analysis/trimmed_gly_stride50.dcd \
+cumolfind-molfind /red/roitberg/nick_analysis/trimmed_ala_stride50.dcd \
                   /red/roitberg/nick_analysis/traj_top_0.0ns.h5 \
                   /red/roitberg/nick_analysis/reduced_all_mol.pq \
                   --task="track_molecules" \
 		          --dump_interval=50 \
                   --timestep=0.25 \
-                  --output_dir=/red/roitberg/nick_analysis/a_gly_track_FIRST-padded/ \
+                  --output_dir=/red/roitberg/nick_analysis/test_output_ala_track/ \
 		          --frame_stride=1 \
-		          --frame_to_track_mol_origin="/red/roitberg/nick_analysis/first_gly.pq"
+		          --frame_to_track_mol_origin="/red/roitberg/nick_analysis/first_ala.pq"
 
 end_time=$(date +%s)
 

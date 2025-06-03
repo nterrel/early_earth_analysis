@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 import os, glob, time
 import mdtraj as md
 from top_loader import load_topology
@@ -7,13 +6,13 @@ from top_loader import load_topology
 trajectory_file = '/red/roitberg/22M_20231222_prodrun/2023-12-23-005238.631380_0.1ns.dcd'
 topology_file   = '/red/roitberg/nick_analysis/traj_top_0.0ns.h5'
 
-local_start  = 7319    # mdtraj sees frames 0…7999
-global_start = 15319   # “real” index of local_start
+local_start  = 5056    # mdtraj sees frames 0…7999
+global_start = 13056   # “real” index of local_start
 stride       = 50
 chunk_size   = 100
 
-temp_dir     = '/red/roitberg/nick_analysis/trimmed_ala_frames'
-output_file  = '/red/roitberg/nick_analysis/trimmed_ala_stride50.dcd'
+temp_dir     = '/red/roitberg/nick_analysis/trimmed_gly_frames'
+output_file  = '/red/roitberg/nick_analysis/trimmed_gly_stride50.dcd'
 # ── END USER PARAMETERS ──────────────────────────────────────────────────────────
 
 os.makedirs(temp_dir, exist_ok=True)
@@ -34,10 +33,8 @@ for chunk in md.iterload(trajectory_file, top=topology, chunk=chunk_size):
     start_idx   = global_idx
     end_idx     = global_idx + len(chunk) - 1
     chunk_count += 1
-
     load_time = time.time() - chunk_start
     print(f"[Chunk {chunk_count}] loaded frames {start_idx}–{end_idx} in {load_time:.2f}s")
-
     # find which desired globals fall in this chunk
     hits = [g for g in desired if start_idx <= g <= end_idx]
     for g in hits:
@@ -47,7 +44,6 @@ for chunk in md.iterload(trajectory_file, top=topology, chunk=chunk_size):
         frame_time = time.time() - frame_start
         saved_frames += 1
         print(f"  → saved frame {g} in {frame_time:.2f}s (total saved: {saved_frames})")
-
     global_idx += len(chunk)
 
 print(f"STEP 1 done in {time.time()-t0:.1f}s, dumped {saved_frames} files")
