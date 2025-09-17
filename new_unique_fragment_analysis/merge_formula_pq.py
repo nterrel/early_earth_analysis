@@ -9,7 +9,7 @@ dfs = []
 
 # Loop through files in the directory
 for filename in os.listdir(directory):
-    if filename.endswith('.pq') and 'molecule' in filename:
+    if filename.endswith('.pq') and 'formula' in filename:
         print(filename)
         file_path = os.path.join(directory, filename)
         # Read the Parquet file
@@ -24,7 +24,7 @@ merged_df = pd.concat(dfs)
 sorted_df = merged_df.sort_values(by='frame')
 
 # Export to a single Parquet file
-output_file = '/red/roitberg/nick_analysis/merged_mol.pq'
+output_file = '/red/roitberg/nick_analysis/merged_formula.pq'
 sorted_df.to_parquet(output_file)
 
 print(f"Merged and sorted data exported to {output_file}")
