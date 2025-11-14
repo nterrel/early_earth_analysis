@@ -1,9 +1,9 @@
 #!/bin/bash
-#SBATCH --job-name=new_molfind_list      # Job name
-#SBATCH --output=new_molfind_list_%j.out          # Output file
-#SBATCH --error=new_molfind_list_%j.err           # Error file
+#SBATCH --job-name=a100_molfind      # Job name
+#SBATCH --output=a100_molfind_%j.out          # Output file
+#SBATCH --error=a100_molfind_%j.err           # Error file
 #SBATCH --partition=gpu
-#SBATCH --gres=gpu:a100:2
+#SBATCH --gres=gpu:a100:1
 #SBATCH --mem=64gb                   		    # Memory per node
 #SBATCH --time=02:00:00               		    # Time limit
 #SBATCH --ntasks=2                    		    # Number of tasks (processes)
@@ -33,10 +33,11 @@ echo using python: $(which python)
 cumolfind-molfind /red/roitberg/nick_analysis/Trimmed_frames/trimmed_1608-1629_1.2ns.dcd \
                   /red/roitberg/nick_analysis/traj_top_0.0ns.h5 \
                   /red/roitberg/nick_analysis/reduced_all_mol.pq \
+                  --task="analyze_trajectory" \
                   --dump_interval=50 \
                   --timestep=0.25 \
-                  --output_dir=/red/roitberg/nick_analysis/new_mol_list
-		  --num_segments=3
+                  --output_dir=/red/roitberg/nick_analysis/a100_small_test \
+		          --num_segments=1
 
 end_time=$(date +%s)
 
