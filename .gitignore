@@ -4,6 +4,7 @@ _broken
 _testing
 unique_fragment_analysis/slurm_scripts
 
+B200_rerun/slurm_scripts
 Extracts/Alanine/HDF_coord
 HDF_coord
 Split_parquets
